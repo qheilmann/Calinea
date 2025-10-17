@@ -1,0 +1,63 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+
+    // Default configuration
+    "options": {
+        "env": {
+            "ENV_FILE": "${workspaceFolder}/.env",
+        }
+    },
+    "presentation": {
+        "clear": true
+    },
+    "problemMatcher": [],
+
+    // Tasks definition
+    "tasks": [
+        {
+            "label": "ResolveBuildCopyPipeline",
+            "type": "shell",
+            "command": "./gradlew ResolveBuildCopyPipeline",
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+                "instanceLimit": 1
+            },
+        },
+        {
+            "label": "Paper Server run",
+            "type": "shell",
+            "command": [
+                // On Windows you need to set the default terminal profile to something like "Git Bash" (ctrl+shift+p > workbench.action.terminal.selectDefaultShell > "Git Bash") 
+                "set a-",
+                "&& . \"${ENV_FILE}\"",
+                "&& cd \"$SERVER_PATH\"",
+                "&& ./start --jar    \"${SERVER_JAR}\"",
+                "           --memory \"${SERVER_ALLOCATED_MEMORY}\"",
+            ],
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+                "instanceLimit": 1
+            },
+        },
+        {
+            // On Windows you need to set the default terminal profile to something like "Git Bash" (ctrl+shift+p > workbench.action.terminal.selectDefaultShell > "Git Bash") 
+            "label": "Paper Server run (HotSwap)",
+            "type": "shell",
+            "command": [
+                "set a-",
+                "&& . \"${ENV_FILE}\"",
+                "&& cd \"${SERVER_PATH}\"",
+                "&& ./start --java   \"${JBR21_HOME}\\bin\\java\"",
+                "           --args   \"-XX:+AllowEnhancedClassRedefinition -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:1000 -Ddisable.watchdog=true\"",
+                "           --jar    \"${SERVER_JAR}\"",
+                "           --memory \"${SERVER_ALLOCATED_MEMORY}\"",
+            ],
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+                "instanceLimit": 1
+            },
+        }
+    ]
+}

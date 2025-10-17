@@ -1,0 +1,50 @@
+# Calinea Dependencies Version Catalog
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+# Core libraries
+adventure = "4.25.0"
+
+# Testing
+# https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+junit-jupiter = "5.13.4"
+# https://mvnrepository.com/artifact/org.mockito/mockito-core
+mockito = "5.18.0"
+
+# Minecraft/Paper (for playground)
+# Paper API
+# https://repo.papermc.io/#browse/browse:maven-snapshots:io%2Fpapermc%2Fpaper%2Fpaper-api
+# Don't forget to update the api version paper-plugin.yml
+# you can see api-version pattern here https://docs.papermc.io/paper/dev/getting-started/paper-plugins/
+paper-api = "1.21.8-R0.1-SNAPSHOT"
+
+# Build plugins
+shadow = "9.2.2"
+
+[libraries]
+# Adventure Components (main library dependency)
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+adventure-text-serializer-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
+
+# Testing
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+
+# Minecraft/Paper (for playground)
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+
+# Generator dependencies
+jackson-core = "com.fasterxml.jackson.core:jackson-core:2.18.0"
+jackson-databind = "com.fasterxml.jackson.core:jackson-databind:2.18.0"
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+
+[bundles]
+adventure = ["adventure-api", "adventure-text-minimessage", "adventure-text-serializer-plain"]
+testing-implementation = ["junit-jupiter", "mockito-core", "mockito-junit-jupiter"]
+testing-runtime = ["junit-platform-launcher"]
+jackson = ["jackson-core", "jackson-databind"]

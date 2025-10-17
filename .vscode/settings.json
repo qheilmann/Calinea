@@ -1,0 +1,34 @@
+{
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.compile.nullAnalysis.nullable": [
+        "javax.annotation.Nullable",
+        "org.eclipse.jdt.annotation.Nullable",
+        "org.springframework.lang.Nullable",
+        "org.jetbrains.annotations.Nullable",
+        "org.checkerframework.checker.nullness.qual.Nullable",
+        "org.jspecify.annotations.Nullable",
+        "org.sonatype.inject.Nullable"
+    ],
+    "java.compile.nullAnalysis.nonnull": [
+        "javax.annotation.Nonnull",
+        "org.eclipse.jdt.annotation.NonNull",
+        "org.springframework.lang.NonNull",
+        "org.jetbrains.annotations.NotNull",
+        "org.checkerframework.checker.nullness.qual.NonNull",
+        "org.jspecify.annotations.NonNull",
+        "org.sonatype.inject.NonNull"
+    ],
+    "java.compile.nullAnalysis.nonnullbydefault" : [
+        "javax.annotation.ParametersAreNonnullByDefault",
+        "org.eclipse.jdt.annotation.NonNullByDefault",
+        "org.springframework.lang.NonNullApi",
+        "org.jetbrains.annotations.NotNullByDefault",
+        "org.jspecify.annotations.NullMarked"
+    ],
+    "java.settings.url": ".vscode/jdt.core.prefs",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    
+    "java.autobuild.enabled": true, // Necessary to use HotSwap
+    "java.debug.settings.hotCodeReplace": "auto" // Optional (automatically triggers HCR on each build/save)
+}
