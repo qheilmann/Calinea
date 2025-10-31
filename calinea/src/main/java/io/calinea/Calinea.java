@@ -2,8 +2,10 @@ package io.calinea;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+
 import io.calinea.internal.ComponentMeasurer;
 
+//TODO add nullmarked jspecify
 /**
  * Calinea - Adventure Component Manipulation Library
  * 

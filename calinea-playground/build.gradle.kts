@@ -12,12 +12,15 @@ java {
 dependencies {
     implementation(project(":calinea"))
     compileOnly(libs.paper.api)
+    implementation(libs.commandapi)
 }
 
 tasks.shadowJar {
     dependsOn(tasks.processResources)
     archiveBaseName.set("calinea-playground")
     archiveClassifier.set("")
+
+    relocate("dev.jorel.commandapi", "io.calinea.playground.libs.commandapi")
 }
 
 

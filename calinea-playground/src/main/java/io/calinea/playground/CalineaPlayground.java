@@ -1,10 +1,14 @@
 package io.calinea.playground;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
+
+import java.io.File;
+
 import io.calinea.Calinea;
-import net.kyori.adventure.text.Component;
+import io.calinea.playground.Commands.CalineaCommand;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
 /**
@@ -13,12 +17,27 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
  * Example Paper plugin demonstrating proper API usage.
  */
 public class CalineaPlayground extends JavaPlugin {
+
+    public static final String PLUGIN_NAME = "CalineaPlayground";
+    public static final String NAMESPACE = "calinea_playground";
+    ComponentLogger LOGGER = ComponentLogger.logger(PLUGIN_NAME);
     
     @Override
+    public void onLoad() {
+        try {
+            onLoadCommandAPI();
+        } catch (Exception e) {
+            LOGGER.error("Failed to initialize: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void onEnable() {
-        getLogger().info("Calinea Playground enabled! ");
-        ComponentLogger logger = ComponentLogger.logger("Calinea");
-        logger.info(Calinea.center("=== CALINEA TEST ==="));
+        CommandAPI.onEnable();
+
+        CalineaCommand.register();
+
+        LOGGER.info(Calinea.center("=== CALINEA TEST ==="));
     }
     
     @Override
@@ -26,38 +45,15 @@ public class CalineaPlayground extends JavaPlugin {
         getLogger().info("Calinea Playground disabled!");
     }
     
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equals("calinea")) {
-            if (args.length > 0 && args[0].equals("center")) {
-                // Test Calinea centering
-                Component centered = Calinea.center("=== CALINEA TEST ===");
-                sender.sendMessage(centered);
-                return true;
-            } else if (args.length > 0 && args[0].equals("measure")) {
-                // Test Calinea measurement
-                String testText = "Hello World!";
-                int width = Calinea.measureWidth(testText);
-                sender.sendMessage("Width of '" + testText + "': " + width + " pixels");
-                return true;
-            } else if (args.length > 0 && args[0].equals("align")) {
-                // Test alignment
-                Component left = Calinea.alignLeft("Left", 100);
-                Component right = Calinea.alignRight("Right", 100);
-                sender.sendMessage(left);
-                sender.sendMessage(right);
-                return true;
-            } else if (args.length > 0 && args[0].equals("separator")) {
-                // Test separator
-                Component separator = Calinea.separator(200);
-                sender.sendMessage(separator);
-                return true;
-            } else {
-                sender.sendMessage("Usage: /calinea <center|measure|align|separator>");
-                return true;
-            }
-        }
-        return false;
+
+
+    private void onLoadCommandAPI() {
+        CommandAPIPaperConfig commandApiConfig = new CommandAPIPaperConfig(this);
+        commandApiConfig.missingExecutorImplementationMessage("This command has no implementations for %s");
+        commandApiConfig.setNamespace(NAMESPACE);
+        commandApiConfig.dispatcherFile(new File(getDataFolder(), "command_registration.json"));
+
+        CommandAPI.onLoad(commandApiConfig);
     }
     
     /**

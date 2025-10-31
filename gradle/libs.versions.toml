@@ -18,6 +18,10 @@ mockito = "5.18.0"
 # you can see api-version pattern here https://docs.papermc.io/paper/dev/getting-started/paper-plugins/
 paper-api = "1.21.8-R0.1-SNAPSHOT"
 
+# CommandAPI: An API for the command UI introduced in Minecraft 1.13
+# https://central.sonatype.com/artifact/dev.jorel/commandapi-paper-shade
+commandapi = "11.0.0"
+
 # Build plugins
 shadow = "9.2.2"
 
@@ -35,6 +39,7 @@ mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.
 
 # Minecraft/Paper (for playground)
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+commandapi = { module = "dev.jorel:commandapi-paper-shade", version.ref = "commandapi" }
 
 # Generator dependencies
 jackson-core = "com.fasterxml.jackson.core:jackson-core:2.18.0"

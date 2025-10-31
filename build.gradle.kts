@@ -6,7 +6,10 @@ allprojects {
     group = project.property("group") as String
     repositories {
         mavenCentral()
+        // PaperMC repository for Paper API
         maven("https://repo.papermc.io/repository/maven-public/")
+        // CodeMC repository for additional plugins (at least Command API)
+        maven(url = "https://repo.codemc.org/repository/maven-public/")
     }
 }
 
