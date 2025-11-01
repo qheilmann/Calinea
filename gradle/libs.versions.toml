@@ -7,7 +7,7 @@ adventure = "4.25.0"
 
 # Testing
 # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-junit-jupiter = "5.13.4"
+junit-jupiter = "6.0.0"
 # https://mvnrepository.com/artifact/org.mockito/mockito-core
 mockito = "5.18.0"
 

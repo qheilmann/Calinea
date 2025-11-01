@@ -470,6 +470,7 @@ build
 
 # Workspace test folder
 ws/
+calinea-output/
 
 # run-paper task
 app/run/

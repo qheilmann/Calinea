@@ -3,10 +3,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CalineaGenerator",
+            "request": "launch",
+            "mainClass": "io.calinea.generator.CalineaGenerator",
+            "projectName": "calinea-generator"
+        },
+        {
+            "type": "java",
             "name": "Paper Attach (HotSwap)",
             "request": "attach",
             "hostName": "localhost",
-            "port": 1000,
+            "port": 1000
         }
     ]
 }
