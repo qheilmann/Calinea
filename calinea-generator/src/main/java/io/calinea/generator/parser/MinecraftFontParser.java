@@ -171,7 +171,7 @@ public class MinecraftFontParser {
         int maxCols = 0;
         for (JsonNode row : chars) {
             String rowString = row.asText();
-            maxCols = Math.max(maxCols, rowString.length()); // TODO check if it's the right length as \u1234\u5678 is 2 chars not 12 (AND surrogate pairs like here https://mcasset.cloud/1.21.7/assets/minecraft/font/include/default.json > nonlatin_european)
+            maxCols = Math.max(maxCols, codepointLength(rowString));
         }
         
         if (maxCols == 0) return;
@@ -184,10 +184,10 @@ public class MinecraftFontParser {
         for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
             String rowString = chars.get(rowIndex).asText();
             
-            for (int colIndex = 0; colIndex < rowString.length(); colIndex++) { // TODO same ^^^, check if it's the right length as \u1234\u5678 is 2 chars not 12
-                char character = rowString.charAt(colIndex);
-                int codepoint = (int) character;
-                
+            for (int colIndex = 0; colIndex < codepointLength(rowString); colIndex++) {
+                int codepointIndex = rowString.offsetByCodePoints(0, colIndex);
+                int codepoint = rowString.codePointAt(codepointIndex);
+
                 // Skip null characters (U+0000)
                 if (codepoint == 0) continue;
                 
@@ -228,6 +228,10 @@ public class MinecraftFontParser {
             }
         }
         
-        return rightmostCol; // Allow 0-width characters for fully transparent glyphs
+        return rightmostCol;
+    }
+
+    private int codepointLength(String string) {
+        return string.codePointCount(0, string.length());
     }
 }

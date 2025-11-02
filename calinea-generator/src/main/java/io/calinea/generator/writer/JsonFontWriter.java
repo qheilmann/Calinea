@@ -122,7 +122,8 @@ public class JsonFontWriter {
                     int width = entry.getValue().asInt();
                     
                     // Parse codepoint from key
-                    int codepoint = parseCodepointFromKey(key);
+                    int codepoint = key.codePointAt(0);
+
                     if (codepoint >= 0) {
                         fontInfo.setWidth(codepoint, width);
                     }
@@ -133,57 +134,5 @@ public class JsonFontWriter {
         }
         
         return fonts;
-    }
-    
-    /**
-     * Parses a codepoint from various key formats.
-     */
-    private int parseCodepointFromKey(String key) {
-        try {
-            // Try direct numeric parsing first
-            return Integer.parseInt(key);
-        } catch (NumberFormatException e) {
-            // Handle Unicode escape format: "\u0030" or "\uD83D\uDE00" (surrogate pair)
-            if (key.startsWith("\\u")) {
-                if (key.length() == 6) {
-                    // Single BMP character: \u0030
-                    return Integer.parseInt(key.substring(2), 16);
-                } else if (key.length() == 12 && key.substring(6, 8).equals("\\u")) {
-                    // Surrogate pair: \uD83D\uDE00
-                    int highSurrogate = Integer.parseInt(key.substring(2, 6), 16);
-                    int lowSurrogate = Integer.parseInt(key.substring(8, 12), 16);
-                    return Character.toCodePoint((char) highSurrogate, (char) lowSurrogate);
-                }
-            }
-            
-            // Legacy support: Try extracting from parentheses: "'A' (65)" -> 65
-            int openParen = key.indexOf('(');
-            int closeParen = key.indexOf(')', openParen);
-            if (openParen >= 0 && closeParen > openParen) {
-                String codepointStr = key.substring(openParen + 1, closeParen);
-                try {
-                    return Integer.parseInt(codepointStr);
-                } catch (NumberFormatException e2) {
-                    // Might be Unicode format: "U+00A0"
-                    if (codepointStr.startsWith("U+")) {
-                        return Integer.parseInt(codepointStr.substring(2), 16);
-                    }
-                }
-            }
-            
-            // Try Unicode format at start: "U+00A0"
-            if (key.startsWith("U+")) {
-                String hex = key.substring(2);
-                return Integer.parseInt(hex, 16);
-            }
-            
-            // Single character format: "'A'"
-            if (key.startsWith("'") && key.length() >= 3 && key.charAt(2) == '\'') {
-                return key.charAt(1);
-            }
-            
-            System.err.println("Could not parse codepoint from key: " + key);
-            return -1;
-        }
     }
 }
