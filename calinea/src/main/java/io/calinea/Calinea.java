@@ -28,24 +28,13 @@ public class Calinea {
 
     public static final String NAMESPACE = "calinea";
     public static final String LIBRARY_NAME = "Calinea";
-    
+
     private static PackInfo packInfo;
     private static CalineaConfig config;
 
     public static void onLoad(CalineaConfig config) {
         Calinea.config = config;
-        
-        // Load the json
-        Path fontInfoPath = config.fontInfoPath();
-
-        JsonFontReader reader = new JsonFontReader();
-        try {
-            packInfo = reader.readFonts(fontInfoPath);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
-        }
-
-        // Make manager
+        reloadFonts();
     }
 
     public static CalineaConfig getConfig() {
@@ -61,6 +50,18 @@ public class Calinea {
 
     public static PackInfo TMPgetPackInfo() {
         return packInfo;
+    }
+
+    public static void reloadFonts() {
+
+        Path fontInfoPath = getConfig().fontInfoPath();
+        JsonFontReader reader = new JsonFontReader();
+
+        try {
+            packInfo = reader.readFonts(fontInfoPath);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
+        }
     }
 
     /**

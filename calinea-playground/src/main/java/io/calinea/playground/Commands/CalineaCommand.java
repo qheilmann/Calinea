@@ -21,6 +21,7 @@ public final class CalineaCommand {
                                     /calinea right [component] [width]
                                     /calinea align (left|right|center) [component] [width]
                                     /calinea separator [width]
+                                    /calinea reload
                                     """;
 
     private CalineaCommand() {
@@ -116,6 +117,14 @@ public final class CalineaCommand {
                     int width = (int) args.getOrDefault("width", 200);
                     Component separator = Calinea.separator(width);
                     sender.sendMessage(separator);
+                })
+            )
+
+            // reload
+            .withSubcommand(new CommandAPICommand("reload")
+                .executes((sender, args) -> {
+                    Calinea.reloadFonts();
+                    sender.sendMessage(Component.text("Calinea fonts reloaded."));
                 })
             )
 
