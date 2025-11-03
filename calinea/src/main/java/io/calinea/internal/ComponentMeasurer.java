@@ -1,8 +1,8 @@
 package io.calinea.internal;
 
 import io.calinea.Calinea;
-import io.calinea.models.FontInfo;
 import io.calinea.models.PackInfo;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
@@ -36,7 +36,9 @@ public class ComponentMeasurer {
         
         // Convert component to plain text for now
         String text = PlainTextComponentSerializer.plainText().serialize(component);
-        return measureText(text);
+        Key fontKey = component.font() != null ? component.font() : Key.key("minecraft:default");
+
+        return measureText(fontKey, text);
     }
     
     /**
@@ -45,14 +47,14 @@ public class ComponentMeasurer {
      * @param text the text to measure
      * @return approximate width in pixels
      */
-    private static int measureText(String text) {
+    private static int measureText(Key fontKey, String text) {
         if (text == null || text.isEmpty()) {
             return 0;
         }
         
         int totalWidth = 0;
         for (char c : text.toCharArray()) {
-            totalWidth += getCharWidth(c);
+            totalWidth += getCharWidth(fontKey, c);
         }
         return totalWidth;
     }
@@ -63,41 +65,12 @@ public class ComponentMeasurer {
      * @param c the character
      * @return width in pixels
      */
-    private static int getCharWidth(char c) {
+    private static int getCharWidth(Key fontKey, char c) {
 
         PackInfo packInfo = Calinea.TMPgetPackInfo();
 
-        // Find the font info for the current character
-        for (FontInfo fontInfo : packInfo.getFonts().values()) {
-            return fontInfo.getWidth(c);
-        }
-
-        // Fallback to default width if not found
-        return packInfo.getDefaultWidth();
+        return packInfo.getWidth(fontKey, c);
     }
-
-    //     // Simplified character width calculation
-    //     // Real implementation would use actual font metrics
-    //     switch (c) {
-    //         case ' ':
-    //             return SPACE_WIDTH;
-    //         case 'i':
-    //         case 'l':
-    //         case '!':
-    //         case '|':
-    //             return 2;
-    //         case 'I':
-    //         case '[':
-    //         case ']':
-    //         case 't':
-    //             return 4;
-    //         case 'f':
-    //         case 'k':
-    //             return 5;
-    //         default:
-    //             return DEFAULT_CHAR_WIDTH;
-    //     }
-    // }
     
     /**
      * Private constructor to prevent instantiation.

@@ -7,6 +7,8 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import io.calinea.Calinea;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public final class CalineaCommand {
     public static final String NAME = "calinea";
@@ -51,9 +53,19 @@ public final class CalineaCommand {
             .withSubcommand(new CommandAPICommand("measure")
                 .withArguments(new ChatComponentArgument("component"))
                 .executes((sender, args) -> {
-                    Component component = (Component) args.get("component");
+                    Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
                     int width = Calinea.measureWidth(component);
-                    sender.sendMessage("Width of '" + component + "': " + width + " pixels");
+
+                    //Format and send message
+                    Component result = Component.text()
+                        .append(Component.text("Width of '", NamedTextColor.GRAY))
+                        .append(component.hoverEvent(Component.text(component.toString()))) // Show the component and its content on hover
+                        .append(Component.text("': ", NamedTextColor.GRAY))
+                        .append(Component.text(width, NamedTextColor.GRAY, TextDecoration.BOLD))
+                        .append(Component.text(" pixels", NamedTextColor.GRAY))
+                        .build();
+
+                    sender.sendMessage(result);
                 })
             )
 
