@@ -2,11 +2,10 @@ package io.calinea.generator;
 
 import io.calinea.generator.parser.MinecraftFontParser;
 import io.calinea.generator.writer.JsonFontWriter;
-import io.calinea.models.FontInfo;
+import io.calinea.models.PackInfo;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Calinea Generator - Font Width Atlas Generator
@@ -78,7 +77,7 @@ public class CalineaGenerator {
      * @return the resolved full path to the output file
      */
     private static Path resolveOutputPath(String outputPath) {
-        Path path = Paths.get(outputPath);
+        Path path = Paths.get(outputPath).normalize();
         
         // If the path ends with .json, treat it as a complete file path
         if (outputPath.toLowerCase().endsWith(".json")) {
@@ -102,21 +101,21 @@ public class CalineaGenerator {
         Path resourcePack = Paths.get(resourcePackPath);
         Path outputFilePath = resolveOutputPath(outputPath);
         
-        List<FontInfo> fonts = parseFonts(resourcePack);
-        validateFonts(fonts);
-        writeFontWidths(fonts, outputFilePath);
+        PackInfo packInfo = parseFonts(resourcePack);
+        validateFonts(packInfo);
+        writeFontWidths(packInfo, outputFilePath);
         
-        printSuccess(outputFilePath, fonts.size());
+        printSuccess(outputFilePath, packInfo.getFonts().size());
     }
     
     /**
      * Parses all fonts from the resource pack.
      * 
      * @param resourcePack the resource pack path
-     * @return list of parsed font information
+     * @return PackInfo containing parsed font information
      * @throws Exception if parsing fails
      */
-    private static List<FontInfo> parseFonts(Path resourcePack) throws Exception {
+    private static PackInfo parseFonts(Path resourcePack) throws Exception {
         MinecraftFontParser parser = new MinecraftFontParser();
         return parser.parseResourcePack(resourcePack);
     }
@@ -124,30 +123,30 @@ public class CalineaGenerator {
     /**
      * Validates that fonts were found and prints font information.
      * 
-     * @param fonts the list of fonts to validate
+     * @param packInfo the PackInfo to validate
      */
-    private static void validateFonts(List<FontInfo> fonts) {
-        if (fonts.isEmpty()) {
+    private static void validateFonts(PackInfo packInfo) {
+        if (packInfo.getFonts().isEmpty()) {
             System.out.println("No fonts found in resource pack!");
             return;
         }
         
-        System.out.println("Found " + fonts.size() + " fonts:");
-        fonts.forEach(font -> System.out.println("  - " + font));
+        System.out.println("Found " + packInfo.getFonts().size() + " fonts:");
+        packInfo.getFonts().values().forEach(font -> System.out.println("  - " + font));
     }
     
     /**
      * Writes the font width mappings to a JSON file.
      * 
-     * @param fonts the font information to write
+     * @param packInfo the PackInfo to write
      * @param outputFilePath the full path to the output file
      * @throws Exception if writing fails
      */
-    private static void writeFontWidths(List<FontInfo> fonts, Path outputFilePath) throws Exception {
+    private static void writeFontWidths(PackInfo packInfo, Path outputFilePath) throws Exception {
         System.out.println("\nGenerating font width file...");
         
         JsonFontWriter writer = new JsonFontWriter();
-        writer.writeFonts(fonts, outputFilePath);
+        writer.writePackInfo(packInfo, outputFilePath);
     }
     
     /**
@@ -157,7 +156,7 @@ public class CalineaGenerator {
      * @param fontCount the number of fonts processed
      */
     private static void printSuccess(Path outputFilePath, int fontCount) {
-        System.out.println("\n✓ Generation complete! File saved to: " + outputFilePath.toAbsolutePath());
+        System.out.println("\nGeneration complete! File saved to: " + outputFilePath.toAbsolutePath());
         System.out.println("This JSON file contains width mappings for all " + fontCount + " fonts");
     }
     

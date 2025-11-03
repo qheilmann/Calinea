@@ -4,11 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.nio.file.Path;
-import java.util.List;
-
 import io.calinea.config.CalineaConfig;
 import io.calinea.internal.ComponentMeasurer;
-import io.calinea.models.FontInfo;
+import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontReader;
 
 //TODO add nullmarked jspecify
@@ -27,7 +25,7 @@ import io.calinea.reader.JsonFontReader;
  */
 public class Calinea {
 
-    private static List<FontInfo> fontInfos;
+    private static PackInfo packInfo;
 
     public static void onLoad(CalineaConfig config) {
         // Load the json
@@ -35,7 +33,7 @@ public class Calinea {
 
         JsonFontReader reader = new JsonFontReader();
         try {
-            fontInfos = reader.readFonts(fontInfoPath);
+            packInfo = reader.readFonts(fontInfoPath);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
         }
@@ -43,8 +41,8 @@ public class Calinea {
         // Make manager
     }
 
-    public static List<FontInfo> TMPgetFontInfos() {
-        return fontInfos;
+    public static PackInfo TMPgetPackInfo() {
+        return packInfo;
     }
 
     /**

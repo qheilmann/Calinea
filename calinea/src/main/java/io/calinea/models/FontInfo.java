@@ -11,11 +11,9 @@ import net.kyori.adventure.key.Key;
 public class FontInfo {
     private final Key fontKey;
     private final Map<Integer, Integer> widths; // codepoint -> width
-    private final int defaultWidth;
     
-    public FontInfo(Key fontKey, int defaultWidth) {
+    public FontInfo(Key fontKey) {
         this.fontKey = fontKey;
-        this.defaultWidth = defaultWidth;
         this.widths = new TreeMap<>();
     }
     
@@ -23,36 +21,25 @@ public class FontInfo {
         return fontKey;
     }
     
-    public int getDefaultWidth() {
-        return defaultWidth;
-    }
-    
     public Map<Integer, Integer> getWidths() {
         return widths;
     }
     
     public void setWidth(int codepoint, int width) {
-        if (width != defaultWidth) {
-            widths.put(codepoint, width);
-        } else {
-            widths.remove(codepoint); // Remove if same as default to save space
-        }
-    }
-    
-    public int getWidth(int codepoint) {
-        return widths.getOrDefault(codepoint, defaultWidth);
+        widths.put(codepoint, width);
     }
     
     /**
-     * Returns only non-default widths for efficient storage.
+     * Gets the width for a specific codepoint.
+     * @return -1 if no specific width is set.
      */
-    public Map<Integer, Integer> getNonDefaultWidths() {
-        return new TreeMap<>(widths);
+    public int getWidth(int codepoint) {
+        return widths.getOrDefault(codepoint, -1);
     }
     
     @Override
     public String toString() {
-        return String.format("FontInfo{name='%s', defaultWidth=%d, overrides=%d}", 
-                           fontKey, defaultWidth, widths.size());
+        return String.format("FontInfo{name='%s', width=%d}", 
+                           fontKey, widths.size());
     }
 }

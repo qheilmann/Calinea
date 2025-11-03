@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.calinea.models.FontInfo;
+import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
 
 import javax.imageio.ImageIO;
@@ -26,9 +27,9 @@ public class MinecraftFontParser {
     }
     
     /**
-     * Parses all fonts from a resource pack directory.
+     * Parses all fonts from a resource pack directory
      */
-    public List<FontInfo> parseResourcePack(Path resourcePackPath) throws IOException {
+    public PackInfo parseResourcePack(Path resourcePackPath) throws IOException {
         List<FontInfo> fonts = new ArrayList<>();
         
         Path fontsDir = resourcePackPath.resolve("assets/minecraft/font");
@@ -50,7 +51,9 @@ public class MinecraftFontParser {
                  }
              });
         
-        return fonts;
+
+        PackInfo packInfo = new PackInfo(fonts);
+        return packInfo;
     }
     
     /**
@@ -60,7 +63,7 @@ public class MinecraftFontParser {
         JsonNode root = objectMapper.readTree(fontFile.toFile());
 
         Key fontKey = resolveFontKey(fontFile);
-        FontInfo fontInfo = new FontInfo(fontKey, 6); // Default Minecraft char width
+        FontInfo fontInfo = new FontInfo(fontKey);
         
         JsonNode providers = root.get("providers");
         if (providers != null && providers.isArray()) {

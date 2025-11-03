@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.calinea.models.FontInfo;
+import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontFormat;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -15,7 +16,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,9 +34,9 @@ public class JsonFontWriter {
     }
     
     /**
-     * Writes all fonts to a single JSON file.
+     * Writes PackInfo to a single JSON file.
      */
-    public void writeFonts(List<FontInfo> fonts, Path outputFile) throws IOException {
+    public void writePackInfo(PackInfo packInfo, Path outputFile) throws IOException {
         // Ensure parent directory exists
         Files.createDirectories(outputFile.getParent());
         
@@ -47,19 +47,21 @@ public class JsonFontWriter {
         root.put("format", JsonFontFormat.FORMAT);
         root.put("description", "Character width mappings for Minecraft fonts. Use https://r12a.github.io/app-conversion/ (JS/Java/C category, ES6 disabled) to convert between \\u format and visual representation.");
         
+        // Pack default width
+        root.put("default_width", packInfo.getDefaultWidth());
+        
         // Fonts array
         ArrayNode fontsArray = root.putArray("fonts");
         
-        for (FontInfo font : fonts) {
+        for (FontInfo font : packInfo.getFonts().values()) {
             ObjectNode fontNode = fontsArray.addObject();
             fontNode.put("fontKey", font.getFontKey().asString());
-            fontNode.put("default_width", font.getDefaultWidth());
             
-            // Character widths (only non-default values)
+            // Character widths
             ObjectNode widthsNode = fontNode.putObject("widths");
-            Map<Integer, Integer> nonDefaultWidths = font.getNonDefaultWidths();
+            Map<Integer, Integer> widths = font.getWidths();
             
-            for (Map.Entry<Integer, Integer> entry : nonDefaultWidths.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : widths.entrySet()) {
                 int codepoint = entry.getKey();
                 int width = entry.getValue();
                 
@@ -76,16 +78,17 @@ public class JsonFontWriter {
         objectMapper.writer(printer).writeValue(outputFile.toFile(), root);
         
         System.out.println("Generated JSON font file: " + outputFile);
-        System.out.println("  - " + fonts.size() + " fonts");
+        System.out.println("  - " + packInfo.getFonts().size() + " fonts");
+        System.out.println("  - Pack default width: " + packInfo.getDefaultWidth());
         
         // Print detailed statistics for each font
-        for (FontInfo font : fonts) {
-            Map<Integer, Integer> nonDefaultWidths = font.getNonDefaultWidths();
-            if (!nonDefaultWidths.isEmpty()) {
-                int minCodepoint = nonDefaultWidths.keySet().stream().mapToInt(Integer::intValue).min().orElse(0);
-                int maxCodepoint = nonDefaultWidths.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
-                System.out.println("    Font '" + font.getFontKey() + "': " + nonDefaultWidths.size() + 
-                                 " overrides (range: U+" + String.format("%04X", minCodepoint) + 
+        for (FontInfo font : packInfo.getFonts().values()) {
+            Map<Integer, Integer> widths = font.getWidths();
+            if (!widths.isEmpty()) {
+                int minCodepoint = widths.keySet().stream().mapToInt(Integer::intValue).min().orElse(0);
+                int maxCodepoint = widths.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
+                System.out.println("    Font '" + font.getFontKey() + "': " + widths.size() + 
+                                 " widths (range: U+" + String.format("%04X", minCodepoint) + 
                                  " to U+" + String.format("%04X", maxCodepoint) + ")");
             } else {
                 System.out.println("    Font '" + font.getFontKey() + "': no character width overrides");
