@@ -5,6 +5,12 @@
 # Core libraries
 adventure = "4.25.0"
 
+# Logging (optional adapters)
+# https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+log4j = "2.25.2"
+# https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+slf4j = "2.0.17"
+
 # Testing
 # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
 junit-jupiter = "6.0.0"
@@ -30,6 +36,10 @@ shadow = "9.2.2"
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
 adventure-text-serializer-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
+
+# Logging (optional adapters)
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 # Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }

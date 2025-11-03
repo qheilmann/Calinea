@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.nio.file.Path;
 import io.calinea.config.CalineaConfig;
 import io.calinea.internal.ComponentMeasurer;
+import io.calinea.logger.CalineaLogger;
 import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontReader;
 
@@ -25,9 +26,15 @@ import io.calinea.reader.JsonFontReader;
  */
 public class Calinea {
 
+    public static final String NAMESPACE = "calinea";
+    public static final String LIBRARY_NAME = "Calinea";
+    
     private static PackInfo packInfo;
+    private static CalineaConfig config;
 
     public static void onLoad(CalineaConfig config) {
+        Calinea.config = config;
+        
         // Load the json
         Path fontInfoPath = config.fontInfoPath();
 
@@ -39,6 +46,17 @@ public class Calinea {
         }
 
         // Make manager
+    }
+
+    public static CalineaConfig getConfig() {
+        if (config == null) {
+            throw new IllegalStateException("Tried to access Calinea config, but it was not initialized! Are you using Calinea features before calling Calinea#onLoad?");
+        }
+        return config;
+    }
+
+    public static CalineaLogger getLogger() {
+        return getConfig().logger();
     }
 
     public static PackInfo TMPgetPackInfo() {

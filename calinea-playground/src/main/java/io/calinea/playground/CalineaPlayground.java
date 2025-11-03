@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 import io.calinea.Calinea;
 import io.calinea.config.CalineaConfig;
+import io.calinea.logger.CalineaLogger;
 import io.calinea.playground.Commands.CalineaCommand;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
@@ -58,7 +59,8 @@ public class CalineaPlayground extends JavaPlugin {
         Path fontInfoPath = Path.of("D:\\dev\\Minecraft\\lib\\Calinea\\calinea-output\\font-widths.json");
 
         CalineaConfig config = new CalineaConfig()
-            .fontInfoPath(fontInfoPath);
+            .fontInfoPath(fontInfoPath)
+            .logger(CalineaLogger.fromSlf4jLogger(LOGGER));
 
         Calinea.onLoad(config);
     }

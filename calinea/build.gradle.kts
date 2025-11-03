@@ -14,6 +14,11 @@ java {
 dependencies {
     api(libs.bundles.adventure)
     implementation(libs.bundles.jackson)
+    
+    // Optional logging adapters
+    compileOnly(libs.log4j.api)
+    compileOnly(libs.slf4j.api)
+    
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
 }
