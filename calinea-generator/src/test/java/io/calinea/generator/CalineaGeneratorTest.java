@@ -1,7 +1,10 @@
 package io.calinea.generator;
 
-import io.calinea.generator.model.FontInfo;
 import io.calinea.generator.writer.JsonFontWriter;
+import io.calinea.models.FontInfo;
+import io.calinea.reader.JsonFontReader;
+import net.kyori.adventure.key.Key;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -16,7 +19,7 @@ public class CalineaGeneratorTest {
     
     // Helper methods
     
-    private FontInfo createSampleFont(String name, int defaultWidth) {
+    private FontInfo createSampleFont(Key name, int defaultWidth) {
         FontInfo font = new FontInfo(name, defaultWidth);
         font.setWidth('A', 8);        // ASCII letter
         font.setWidth('4', 9);        // ASCII digit
@@ -30,15 +33,15 @@ public class CalineaGeneratorTest {
         assertTrue(file.toFile().length() > 0, "File should not be empty");
     }
     
-    private FontInfo findFontByName(List<FontInfo> fonts, String name) {
+    private FontInfo findFontByName(List<FontInfo> fonts, Key fontKey) {
         return fonts.stream()
-            .filter(f -> f.getName().equals(name))
+            .filter(f -> f.getFontKey().equals(fontKey))
             .findFirst()
-            .orElseThrow(() -> new AssertionError("Font '" + name + "' not found"));
+            .orElseThrow(() -> new AssertionError("Font '" + fontKey + "' not found"));
     }
     
     private void assertFontsEqual(FontInfo expected, FontInfo actual) {
-        assertEquals(expected.getName(), actual.getName(), "Font names should match");
+        assertEquals(expected.getFontKey(), actual.getFontKey(), "Font names should match");
         assertEquals(expected.getDefaultWidth(), actual.getDefaultWidth(), "Default widths should match");
         assertEquals(expected.getNonDefaultWidths().size(), actual.getNonDefaultWidths().size(), 
                     "Number of character overrides should match");
@@ -52,22 +55,28 @@ public class CalineaGeneratorTest {
                         "Width for codepoint U+" + String.format("%04X", codepoint) + " should match");
         }
     }
+
+    @SuppressWarnings("null")
+    private Key key(String name) {
+        return Key.key("test", name);
+    }
     
     @Nested
     class FontInfoModelTests {
         
         @Test
         void shouldCreateFontWithCorrectProperties() {
-            FontInfo font = new FontInfo("test_font", 6);
+            Key fontKey = key("test_font");
+            FontInfo font = new FontInfo(fontKey, 6);
             
-            assertEquals("test_font", font.getName());
+            assertEquals(fontKey, font.getFontKey());
             assertEquals(6, font.getDefaultWidth());
             assertEquals(0, font.getNonDefaultWidths().size());
         }
         
         @Test
         void shouldReturnDefaultWidthForUnsetCharacters() {
-            FontInfo font = new FontInfo("test", 6);
+            FontInfo font = new FontInfo(key("test_font"), 6);
             
             assertEquals(6, font.getWidth('a'));
             assertEquals(6, font.getWidth('Z'));
@@ -77,7 +86,7 @@ public class CalineaGeneratorTest {
         
         @Test
         void shouldSetAndGetCharacterWidths() {
-            FontInfo font = new FontInfo("test", 6);
+            FontInfo font = new FontInfo(key("test_font"), 6);
             
             font.setWidth('A', 8);
             assertEquals(8, font.getWidth('A'));
@@ -90,7 +99,7 @@ public class CalineaGeneratorTest {
         
         @Test
         void shouldRemoveOverrideWhenSettingToDefaultWidth() {
-            FontInfo font = new FontInfo("test", 6);
+            FontInfo font = new FontInfo(key("test_font"), 6);
             
             font.setWidth('A', 8);
             assertEquals(1, font.getNonDefaultWidths().size());
@@ -102,7 +111,7 @@ public class CalineaGeneratorTest {
         
         @Test
         void shouldHandleUnicodeCharactersAndSurrogatePairs() {
-            FontInfo font = new FontInfo("test", 6);
+            FontInfo font = new FontInfo(key("test_font"), 6);
             
             // Unicode symbol
             font.setWidth('€', 9);
@@ -121,7 +130,7 @@ public class CalineaGeneratorTest {
         
         @Test
         void shouldWriteAndReadSimpleFont(@TempDir Path tempDir) throws Exception {
-            FontInfo originalFont = createSampleFont("simple_font", 5);
+            FontInfo originalFont = createSampleFont(key("simple_font"), 5);
             List<FontInfo> originalFonts = Arrays.asList(originalFont);
             
             JsonFontWriter writer = new JsonFontWriter();
@@ -129,16 +138,17 @@ public class CalineaGeneratorTest {
             writer.writeFonts(originalFonts, jsonFile);
             
             assertFileWritten(jsonFile);
-            
-            List<FontInfo> loadedFonts = writer.readFonts(jsonFile);
+
+            JsonFontReader reader = new JsonFontReader();
+            List<FontInfo> loadedFonts = reader.readFonts(jsonFile);
             assertEquals(1, loadedFonts.size());
             assertFontsEqual(originalFont, loadedFonts.get(0));
         }
         
         @Test
         void shouldWriteAndReadMultipleFonts(@TempDir Path tempDir) throws Exception {
-            FontInfo font1 = createSampleFont("font1", 6);
-            FontInfo font2 = createSampleFont("font2", 5);
+            FontInfo font1 = createSampleFont(key("font1"), 6);
+            FontInfo font2 = createSampleFont(key("font2"), 5);
             font2.setWidth('Z', 8); // Add different character override
             
             List<FontInfo> originalFonts = Arrays.asList(font1, font2);
@@ -148,20 +158,21 @@ public class CalineaGeneratorTest {
             writer.writeFonts(originalFonts, jsonFile);
             
             assertFileWritten(jsonFile);
-            
-            List<FontInfo> loadedFonts = writer.readFonts(jsonFile);
+
+            JsonFontReader reader = new JsonFontReader();
+            List<FontInfo> loadedFonts = reader.readFonts(jsonFile);
             assertEquals(2, loadedFonts.size());
-            
-            FontInfo loadedFont1 = findFontByName(loadedFonts, "font1");
-            FontInfo loadedFont2 = findFontByName(loadedFonts, "font2");
-            
+
+            FontInfo loadedFont1 = findFontByName(loadedFonts, key("font1"));
+            FontInfo loadedFont2 = findFontByName(loadedFonts, key("font2"));
+
             assertFontsEqual(font1, loadedFont1);
             assertFontsEqual(font2, loadedFont2);
         }
         
         @Test
         void shouldHandleVariousCharacterTypes(@TempDir Path tempDir) throws Exception {
-            FontInfo font = createSampleFont("unicode_font", 6);
+            FontInfo font = createSampleFont(key("unicode_font"), 6);
             List<FontInfo> originalFonts = Arrays.asList(font);
             
             JsonFontWriter writer = new JsonFontWriter();
@@ -169,8 +180,9 @@ public class CalineaGeneratorTest {
             writer.writeFonts(originalFonts, jsonFile);
             
             assertFileWritten(jsonFile);
-            
-            List<FontInfo> loadedFonts = writer.readFonts(jsonFile);
+
+            JsonFontReader reader = new JsonFontReader();
+            List<FontInfo> loadedFonts = reader.readFonts(jsonFile);
             assertEquals(1, loadedFonts.size());
             
             FontInfo loadedFont = loadedFonts.get(0);
@@ -186,7 +198,7 @@ public class CalineaGeneratorTest {
         
         @Test
         void shouldHandleEmptyFont(@TempDir Path tempDir) throws Exception {
-            FontInfo emptyFont = new FontInfo("empty_font", 7);
+            FontInfo emptyFont = new FontInfo(key("empty_font"), 7);
             List<FontInfo> originalFonts = Arrays.asList(emptyFont);
             
             JsonFontWriter writer = new JsonFontWriter();
@@ -195,7 +207,8 @@ public class CalineaGeneratorTest {
             
             assertFileWritten(jsonFile);
             
-            List<FontInfo> loadedFonts = writer.readFonts(jsonFile);
+            JsonFontReader reader = new JsonFontReader();
+            List<FontInfo> loadedFonts = reader.readFonts(jsonFile);
             assertEquals(1, loadedFonts.size());
             assertFontsEqual(emptyFont, loadedFonts.get(0));
         }

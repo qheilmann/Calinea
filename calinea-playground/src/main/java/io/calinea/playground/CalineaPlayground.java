@@ -6,8 +6,10 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIPaperConfig;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import io.calinea.Calinea;
+import io.calinea.config.CalineaConfig;
 import io.calinea.playground.Commands.CalineaCommand;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
@@ -27,7 +29,13 @@ public class CalineaPlayground extends JavaPlugin {
         try {
             onLoadCommandAPI();
         } catch (Exception e) {
-            LOGGER.error("Failed to initialize: " + e.getMessage());
+            LOGGER.error("Failed to initialize command API: " + e.getMessage());
+        }
+
+        try  {
+        	onLoadCalinea();
+        } catch (Exception e) {
+        	LOGGER.error("Failed to load Calinea: " + e.getMessage());
         }
     }
 
@@ -45,7 +53,15 @@ public class CalineaPlayground extends JavaPlugin {
         getLogger().info("Calinea Playground disabled!");
     }
     
+    private void onLoadCalinea() {
+        // Path fontInfoPath = Path.of(getDataFolder().toString(), "font-widths.json");
+        Path fontInfoPath = Path.of("D:\\dev\\Minecraft\\lib\\Calinea\\calinea-output\\font-widths.json");
 
+        CalineaConfig config = new CalineaConfig()
+            .fontInfoPath(fontInfoPath);
+
+        Calinea.onLoad(config);
+    }
 
     private void onLoadCommandAPI() {
         CommandAPIPaperConfig commandApiConfig = new CommandAPIPaperConfig(this);

@@ -6,7 +6,8 @@
             "name": "CalineaGenerator",
             "request": "launch",
             "mainClass": "io.calinea.generator.CalineaGenerator",
-            "projectName": "calinea-generator"
+            "projectName": "calinea-generator",
+            "args": "D:\\dev\\Minecraft\\ressourcepack\\CalineaTestPack"
         },
         {
             "type": "java",

@@ -469,7 +469,6 @@ build
 !tools/pushToServer/plugins/*.jar
 
 # Workspace test folder
-ws/
 calinea-output/
 
 # run-paper task

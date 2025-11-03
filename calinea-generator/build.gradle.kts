@@ -10,6 +10,7 @@ java {
 }
 
 dependencies {
+    implementation(project(":calinea"))
     implementation(libs.bundles.jackson)
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)

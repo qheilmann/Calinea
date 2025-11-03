@@ -13,6 +13,7 @@ java {
 
 dependencies {
     api(libs.bundles.adventure)
+    implementation(libs.bundles.jackson)
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
 }

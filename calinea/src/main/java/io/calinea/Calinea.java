@@ -3,7 +3,13 @@ package io.calinea;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.nio.file.Path;
+import java.util.List;
+
+import io.calinea.config.CalineaConfig;
 import io.calinea.internal.ComponentMeasurer;
+import io.calinea.models.FontInfo;
+import io.calinea.reader.JsonFontReader;
 
 //TODO add nullmarked jspecify
 /**
@@ -20,7 +26,27 @@ import io.calinea.internal.ComponentMeasurer;
  * </pre>
  */
 public class Calinea {
-    
+
+    private static List<FontInfo> fontInfos;
+
+    public static void onLoad(CalineaConfig config) {
+        // Load the json
+        Path fontInfoPath = config.fontInfoPath();
+
+        JsonFontReader reader = new JsonFontReader();
+        try {
+            fontInfos = reader.readFonts(fontInfoPath);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
+        }
+
+        // Make manager
+    }
+
+    public static List<FontInfo> TMPgetFontInfos() {
+        return fontInfos;
+    }
+
     /**
      * Centers text within the default Minecraft chat width (320 pixels).
      * 

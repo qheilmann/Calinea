@@ -2,9 +2,12 @@ package io.calinea.generator.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.calinea.generator.model.FontInfo;
+
+import io.calinea.models.FontInfo;
+import net.kyori.adventure.key.Key;
 
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,9 +58,9 @@ public class MinecraftFontParser {
      */
     public FontInfo parseFontFile(Path fontFile) throws IOException {
         JsonNode root = objectMapper.readTree(fontFile.toFile());
-        
-        String fontName = fontFile.getFileName().toString().replace(".json", "");
-        FontInfo fontInfo = new FontInfo(fontName, 6); // Default Minecraft char width
+
+        Key fontKey = resolveFontKey(fontFile);
+        FontInfo fontInfo = new FontInfo(fontKey, 6); // Default Minecraft char width
         
         JsonNode providers = root.get("providers");
         if (providers != null && providers.isArray()) {
@@ -137,6 +140,46 @@ public class MinecraftFontParser {
         
         Path resourcePackRoot = findResourcePackRoot(fontDir);
         return resourcePackRoot.resolve("assets").resolve(namespace).resolve("textures").resolve(path);
+    }
+
+    @SuppressWarnings("null")
+    private Key resolveFontKey(Path fontFile) {
+        String fileName = fontFile.getFileName().toString().replace(".json", "");
+        String namespace = extractNamespaceFromFontPath(fontFile);
+        
+        return Key.key(namespace, fileName);
+    }
+    
+    /**
+     * Extracts the namespace from a font file path.
+     * The namespace is the directory name directly under assets/ in the path structure:
+     * <packroot>/assets/<namespace>/font/<fontKeyName>
+     * 
+     * @param fontFile The path to the font file
+     * @return The namespace (e.g., "minecraft", "ttt")
+     * @throws IllegalArgumentException if the path structure is invalid
+     */
+    private String extractNamespaceFromFontPath(Path fontFile) {
+        // Find the resource pack root first
+        Path resourcePackRoot = findResourcePackRoot(fontFile.getParent());
+        
+        // Get the relative path from resource pack root to the font file
+        Path relativePath = resourcePackRoot.relativize(fontFile);
+        
+        // Expected structure: assets/<namespace>/font/<fontfile>.json
+        if (relativePath.getNameCount() < 3) {
+            throw new IllegalArgumentException("Invalid font file path structure: " + fontFile);
+        }
+        
+        if (!"assets".equals(relativePath.getName(0).toString())) {
+            throw new IllegalArgumentException("Font file must be under assets directory: " + fontFile);
+        }
+        
+        if (!"font".equals(relativePath.getName(2).toString())) {
+            throw new IllegalArgumentException("Font file must be in font directory: " + fontFile);
+        }
+        
+        return relativePath.getName(1).toString();
     }
     
     /**
