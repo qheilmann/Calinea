@@ -7,7 +7,8 @@ import io.calinea.logger.CalineaLogger;
 public class CalineaConfig {
     private Path fontInfoPath = Path.of("./font-widths.json");
     private CalineaLogger logger = CalineaLogger.silent();
-    private Path fontInfoPath;
+    private boolean warnOnMissingWidths = true;
+    private boolean warnOnMissingFonts = true;
 
     public Path fontInfoPath() {
         return fontInfoPath;
@@ -30,6 +31,36 @@ public class CalineaConfig {
      */
     public CalineaConfig logger(CalineaLogger logger) {
         this.logger = logger;
+        return this;
+    }
+
+    public boolean warnOnMissingWidths() {
+        return warnOnMissingWidths;
+    }
+
+    /**
+     * Sets whether to warn when a character is missing from the font widths data.
+     * In all case when a character is missing, it will default to a width of {@link PackInfo.DEFAULT_CHAR_WIDTH}.
+     * <p>
+     * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
+     */
+    public CalineaConfig warnOnMissingWidths(boolean warnOnMissingFontWidths) {
+        this.warnOnMissingWidths = warnOnMissingFontWidths;
+        return this;
+    }
+
+    public boolean warnOnMissingFonts() {
+        return warnOnMissingFonts;
+    }
+
+    /**
+     * Sets whether to warn when a font is missing from the font widths data.
+     * In all case when a font is missing, all its characters will default to a width of {@link PackInfo.DEFAULT_CHAR_WIDTH}.
+     * <p>
+     * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
+     */
+    public CalineaConfig warnOnMissingFonts(boolean warnOnMissingFonts) {
+        this.warnOnMissingFonts = warnOnMissingFonts;
         return this;
     }
 }

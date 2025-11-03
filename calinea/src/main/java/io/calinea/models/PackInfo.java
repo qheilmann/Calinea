@@ -8,6 +8,7 @@ import java.util.SequencedCollection;
 
 import org.jetbrains.annotations.Unmodifiable;
 
+import io.calinea.Calinea;
 import net.kyori.adventure.key.Key;
 
 public class PackInfo {
@@ -61,14 +62,22 @@ public class PackInfo {
      */
     public int getWidth(Key fontKey, int codepoint) {
         FontInfo fontInfo = fonts.get(fontKey);
-        if (fontInfo != null) {
-            int width = fontInfo.getWidth(codepoint);
-            if (width != -1) {
-                return width;
+
+        if (fontInfo == null) {
+            if(Calinea.getConfig().warnOnMissingFonts()){
+                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found. Using default width of '" + defaultWidth + "' for character '" + (char) codepoint + "'.");
             }
-            // TODO depending of the config (if warn, warn missing char width, if silent juste return default)
+            return defaultWidth;
         }
-        
-        return defaultWidth;
+
+        int width = fontInfo.getWidth(codepoint);
+        if (width == -1) {
+            if(Calinea.getConfig().warnOnMissingWidths()){
+                Calinea.getLogger().warning("Character '" + (char) codepoint + "' not found in font '" + fontKey.asString() + "'. Using default width '" + defaultWidth + "'.");
+            }
+            return defaultWidth;
+        }
+
+        return width;
     }
 }
