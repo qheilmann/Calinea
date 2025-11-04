@@ -14,10 +14,14 @@ import io.calinea.Calinea;
 import net.kyori.adventure.key.Key;
 
 public class PackInfo {
-    private static final int DEFAULT_CHAR_WIDTH = 5;
+    public static final double MISSING_WIDTH = FontInfo.MISSING_WIDTH;
+    public static final double MISSING_FONT = -2.0;
+    public static final double CIRCULAR_REFERENCE = -3.0;
+
+    public static final double DEFAULT_CHAR_WIDTH = 5.0;
 
     private Map<Key, FontInfo> fonts;
-    private final int defaultWidth;
+    private final double defaultWidth;
 
     public PackInfo() {
         this(List.of(), DEFAULT_CHAR_WIDTH);
@@ -27,11 +31,11 @@ public class PackInfo {
         this(fonts, DEFAULT_CHAR_WIDTH);
     }
 
-    public PackInfo(int defaultWidth) {
+    public PackInfo(double defaultWidth) {
         this(List.of(), defaultWidth);
     }
 
-    public PackInfo(SequencedCollection<FontInfo> fonts, int defaultWidth) {
+    public PackInfo(SequencedCollection<FontInfo> fonts, double defaultWidth) {
         this.defaultWidth = defaultWidth;
         this.fonts = new LinkedHashMap<>();
 
@@ -54,7 +58,7 @@ public class PackInfo {
         return Collections.unmodifiableMap(fonts);
     }
 
-    public int getDefaultWidth() {
+    public double getDefaultWidth() {
         return defaultWidth;
     }
 
@@ -63,29 +67,34 @@ public class PackInfo {
      * If the font or character is not found, returns the default width.
      * Resolves references recursively.
      */
-    public int getWidth(Key fontKey, int codepoint) {
-        int width = getWidth(fontKey, codepoint, new HashSet<>());
-        if (width == -1) {
-            if(Calinea.getConfig().warnOnMissingWidths()){
+    public double getWidth(Key fontKey, int codepoint) {
+        double width = getWidth(fontKey, codepoint, new HashSet<>());
+
+        // Missing
+        if (width <= 0) {
+            if (width == MISSING_WIDTH && Calinea.getConfig().warnOnMissingWidths()){
                 Calinea.getLogger().warning("Character '" + Character.toString(codepoint) + "' not found in font '" + fontKey.asString() + "' or its references. Using default width '" + defaultWidth + "'.");
             }
+
+            if (width == MISSING_FONT && Calinea.getConfig().warnOnMissingFonts()){
+                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found. Using default width '" + defaultWidth + "'.");
+            }
+
             return defaultWidth;
         }
+
         return width;
     }
     
     /**
      * Internal method to get width with circular reference protection.
-     * @return The width if found, or -1 if not found (caller should use defaultWidth)
+     * @return The width if found, or -1 if character not found, or {@link PackInfo#MISSING_FONT} if font not found, or -3 if circular reference detected.
      */
-    private int getWidth(Key fontKey, int codepoint, Set<Key> visited) {
+    private double getWidth(Key fontKey, int codepoint, Set<Key> visited) {
         FontInfo fontInfo = fonts.get(fontKey);
 
         if (fontInfo == null) {
-            if(Calinea.getConfig().warnOnMissingFonts()){
-                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found.");
-            }
-            return -1; // Font not found
+            return MISSING_FONT;
         }
         
         // Check for circular references
@@ -93,15 +102,15 @@ public class PackInfo {
             if(Calinea.getConfig().verboseLogging()){
                 Calinea.getLogger().info("Circular reference detected for font '" + fontKey.asString() + "', stopping recursion.");
             }
-            return -1; // Circular reference
+            return CIRCULAR_REFERENCE; // Circular reference
         }
         
         visited.add(fontKey);
 
         try {
             // Check direct width first
-            int width = fontInfo.getDirectWidth(codepoint);
-            if (width != -1) {
+            double width = fontInfo.getDirectWidth(codepoint);
+            if (width >= 0) {
                 return width; // Found directly
             }
             
@@ -116,7 +125,7 @@ public class PackInfo {
                 }
                 
                 width = getWidth(referenceKey, codepoint, visited);
-                if (width != -1) {
+                if (width >= 0) {
                     return width; // Found in reference
                 }
             }
@@ -125,6 +134,6 @@ public class PackInfo {
         }
 
         // Not found anywhere in this font or its references
-        return -1;
+        return MISSING_WIDTH;
     }
 }

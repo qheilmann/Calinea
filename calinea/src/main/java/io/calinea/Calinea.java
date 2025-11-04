@@ -21,7 +21,7 @@ import io.calinea.reader.JsonFontReader;
  * <pre>
  * Component centered = Calinea.center("Hello World!");
  * Component aligned = Calinea.alignLeft("Left text", 100);
- * int width = Calinea.measureWidth(component);
+ * double width = Calinea.measureWidth(component);
  * </pre>
  */
 public class Calinea {
@@ -91,10 +91,10 @@ public class Calinea {
      * @param totalWidth the total width to center within
      * @return centered component
      */
-    public static Component center(Component component, int totalWidth) {
-        int componentWidth = measureWidth(component);
-        int padding = Math.max(0, (totalWidth - componentWidth) / 2);
-        return Component.text(" ".repeat(padding)).append(component);
+    public static Component center(Component component, double totalWidth) {
+        double componentWidth = measureWidth(component);
+        double padding = Math.max(0, (totalWidth - componentWidth) / 2 / 4); // Divide by 4 for space character width
+        return Component.text(" ".repeat((int) padding)).append(component);
     }
     
     /**
@@ -104,7 +104,7 @@ public class Calinea {
      * @param totalWidth the total width to align within
      * @return left-aligned component
      */
-    public static Component alignLeft(String text, int totalWidth) {
+    public static Component alignLeft(String text, double totalWidth) {
         return alignLeft(Component.text(text), totalWidth);
     }
     
@@ -115,10 +115,10 @@ public class Calinea {
      * @param totalWidth the total width to align within
      * @return left-aligned component
      */
-    public static Component alignLeft(Component component, int totalWidth) {
-        int componentWidth = measureWidth(component);
-        int padding = Math.max(0, totalWidth - componentWidth);
-        return component.append(Component.text(" ".repeat(padding)));
+    public static Component alignLeft(Component component, double totalWidth) {
+        double componentWidth = measureWidth(component);
+        double padding = Math.max(0, totalWidth - componentWidth) / 4; // Divide by 4 for space character width
+        return component.append(Component.text(" ".repeat((int) padding)));
     }
     
     /**
@@ -128,7 +128,7 @@ public class Calinea {
      * @param totalWidth the total width to align within
      * @return right-aligned component
      */
-    public static Component alignRight(String text, int totalWidth) {
+    public static Component alignRight(String text, double totalWidth) {
         return alignRight(Component.text(text), totalWidth);
     }
     
@@ -139,10 +139,10 @@ public class Calinea {
      * @param totalWidth the total width to align within
      * @return right-aligned component
      */
-    public static Component alignRight(Component component, int totalWidth) {
-        int componentWidth = measureWidth(component);
-        int padding = Math.max(0, totalWidth - componentWidth);
-        return Component.text(" ".repeat(padding)).append(component);
+    public static Component alignRight(Component component, double totalWidth) {
+        double componentWidth = measureWidth(component);
+        double padding = Math.max(0, totalWidth - componentWidth) / 4; // Divide by 4 for space character width
+        return Component.text(" ".repeat((int) padding)).append(component);
     }
     
     /**
@@ -151,7 +151,7 @@ public class Calinea {
      * @param component the component to measure
      * @return width in pixels
      */
-    public static int measureWidth(Component component) {
+    public static double measureWidth(Component component) {
         return ComponentMeasurer.measureComponent(component);
     }
     
@@ -161,7 +161,7 @@ public class Calinea {
      * @param text the text to measure
      * @return width in pixels
      */
-    public static int measureWidth(String text) {
+    public static double measureWidth(String text) {
         return measureWidth(Component.text(text));
     }
     
@@ -171,8 +171,8 @@ public class Calinea {
      * @param width the width in pixels
      * @return separator component
      */
-    public static Component separator(int width) {
-        int dashCount = width / 6; // Approximate width of a dash
+    public static Component separator(double width) {
+        int dashCount = (int) (width / 5); // Approximate width of a dash
         return Component.text("-".repeat(dashCount)).color(NamedTextColor.GRAY);
     }
     

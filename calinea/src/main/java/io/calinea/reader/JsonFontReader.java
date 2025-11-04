@@ -49,7 +49,7 @@ public class JsonFontReader {
         if (defaultWidthNode.isMissingNode() || !defaultWidthNode.isInt()) {
             throw new IOException("Missing or invalid 'default_width' in JSON file");
         }
-        int defaultWidth = defaultWidthNode.asInt();
+        double defaultWidth = defaultWidthNode.asDouble();
 
         JsonNode fontsArray = root.get("fonts");
         if (fontsArray == null || !fontsArray.isArray()) {
@@ -81,7 +81,7 @@ public class JsonFontReader {
             if (widthsNode != null && widthsNode.isObject()) {
                 widthsNode.fields().forEachRemaining(entry -> {
                     String key = entry.getKey();
-                    int width = entry.getValue().asInt();
+                    double width = entry.getValue().asDouble();
                     
                     // Parse codepoint from key
                     int codepoint = key.codePointAt(0);

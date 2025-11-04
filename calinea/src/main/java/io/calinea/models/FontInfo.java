@@ -11,8 +11,10 @@ import net.kyori.adventure.key.Key;
  * Represents font information including character widths and references.
  */
 public class FontInfo {
+    public static final Double MISSING_WIDTH = -1.0;
+
     private final Key fontKey;
-    private final Map<Integer, Integer> widths; // codepoint -> width
+    private final Map<Integer, Double> widths; // codepoint -> width
     private final List<Key> references; // fonts this font references
     
     public FontInfo(Key fontKey) {
@@ -25,7 +27,7 @@ public class FontInfo {
         return fontKey;
     }
     
-    public Map<Integer, Integer> getWidths() {
+    public Map<Integer, Double> getWidths() {
         return widths;
     }
     
@@ -48,26 +50,26 @@ public class FontInfo {
         return !references.isEmpty();
     }
     
-    public void setWidth(int codepoint, int width) {
+    public void setWidth(int codepoint, double width) {
         widths.put(codepoint, width);
     }
     
     /**
      * Gets the direct width for a specific codepoint from this font only.
-     * Does not resolve references, use {@link PackInfo#getCharacterWidth(int, FontInfo)} for that.
-     * @return -1 if no specific width is set.
+     * Does not resolve references, use {@link PackInfo#getWidth(Key, int)} for that.
+     * @return -1.0 if no specific width is set.
      */
-    public int getDirectWidth(int codepoint) {
-        return widths.getOrDefault(codepoint, -1);
+    public double getDirectWidth(int codepoint) {
+        return widths.getOrDefault(codepoint, MISSING_WIDTH);
     }
     
     @Override
     public String toString() {
         if (hasReferences()) {
-            return String.format("FontInfo{key='%s', widths=%d, references=%s}", 
+            return String.format("FontInfo{key='%s', nbOfDirectCharacters=%d, references=%s}", 
                                fontKey, widths.size(), references);
         } else {
-            return String.format("FontInfo{key='%s', widths=%d}", 
+            return String.format("FontInfo{key='%s', nbOfDirectCharacters=%d}", 
                                fontKey, widths.size());
         }
     }

@@ -13,7 +13,7 @@ class CalineaTest {
     }
     
     @Test void measureWidthShouldReturnPositiveValue() {
-        int width = Calinea.measureWidth("Hello");
+        double width = Calinea.measureWidth("Hello");
         assertTrue(width > 0, "width should be positive");
     }
     

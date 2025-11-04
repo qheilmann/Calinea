@@ -29,7 +29,7 @@ public class ComponentMeasurer {
      * @param component the component to measure
      * @return approximate width in pixels
      */
-    public static int measureComponent(Component component) {
+    public static double measureComponent(Component component) {
         if (component == null) {
             return 0;
         }
@@ -47,12 +47,12 @@ public class ComponentMeasurer {
      * @param text the text to measure
      * @return approximate width in pixels
      */
-    private static int measureText(Key fontKey, String text) {
+    private static double measureText(Key fontKey, String text) {
         if (text == null || text.isEmpty()) {
             return 0;
         }
         
-        int totalWidth = 0;
+        double totalWidth = 0;
         for (char c : text.toCharArray()) {
             totalWidth += getCharWidth(fontKey, c);
         }
@@ -65,7 +65,7 @@ public class ComponentMeasurer {
      * @param c the character
      * @return width in pixels
      */
-    private static int getCharWidth(Key fontKey, char c) {
+    private static double getCharWidth(Key fontKey, char c) {
 
         PackInfo packInfo = Calinea.TMPgetPackInfo();
 

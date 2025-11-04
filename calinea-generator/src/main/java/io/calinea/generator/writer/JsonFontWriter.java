@@ -34,6 +34,42 @@ public class JsonFontWriter {
         this.objectMapper = new ObjectMapper(factory);
     }
     
+    private boolean isWholeNumber(double value) {
+        // Check for NaN and infinite values
+        if (!Double.isFinite(value)) {
+            return false;
+        }
+        
+        // Get the rounded value
+        long roundedValue = Math.round(value);
+        
+        // Check if the rounded value is within the safe integer range
+        if (roundedValue < Integer.MIN_VALUE || roundedValue > Integer.MAX_VALUE) {
+            return false;
+        }
+        
+        // Check if the value is close enough to the rounded value
+        // Using epsilon for floating-point comparison safety
+        double epsilon = 1e-10;
+        return Math.abs(value - roundedValue) < epsilon;
+    }
+    
+    /**
+     * Adds a numeric value to a JSON ObjectNode, using integer representation
+     * for whole numbers and double representation for fractional values.
+     * 
+     * @param node the ObjectNode to add the value to
+     * @param key the key for the value
+     * @param value the numeric value to add
+     */
+    private void jsonPutNumber(ObjectNode node, String key, double value) {
+        if (isWholeNumber(value)) {
+            node.put(key, (int) Math.round(value));
+        } else {
+            node.put(key, value);
+        }
+    }
+    
     /**
      * Writes PackInfo to a single JSON file.
      */
@@ -49,7 +85,7 @@ public class JsonFontWriter {
         root.put("description", "Character width mappings for Minecraft fonts. Use https://r12a.github.io/app-conversion/ (JS/Java/C category, ES6 disabled) to convert between \\u format and visual representation.");
         
         // Pack default width
-        root.put("default_width", packInfo.getDefaultWidth());
+        jsonPutNumber(root, "default_width", packInfo.getDefaultWidth());
         
         // Fonts array
         ArrayNode fontsArray = root.putArray("fonts");
@@ -67,18 +103,19 @@ public class JsonFontWriter {
             }
             
             // Character widths (only if not empty)
-            Map<Integer, Integer> widths = font.getWidths();
+            Map<Integer, Double> widths = font.getWidths();
             if (!widths.isEmpty()) {
                 ObjectNode widthsNode = fontNode.putObject("widths");
-                
-                for (Map.Entry<Integer, Integer> entry : widths.entrySet()) {
+
+                for (Map.Entry<Integer, Double> entry : widths.entrySet()) {
                     int codepoint = entry.getKey();
-                    int width = entry.getValue();
-                    
+                    double width = entry.getValue();
+
                     // Use actual character - Jackson will escape non-ASCII as Unicode
                     String key = new String(Character.toChars(codepoint));
                     
-                    widthsNode.put(key, width);
+                    // Add width value using optimal number representation
+                    jsonPutNumber(widthsNode, key, width);
                 }
             }
         }
@@ -94,7 +131,7 @@ public class JsonFontWriter {
         
         // Print detailed statistics for each font
         for (FontInfo font : packInfo.getFonts().values()) {
-            Map<Integer, Integer> widths = font.getWidths();
+            Map<Integer, Double> widths = font.getWidths();
             if (font.hasReferences()) {
                 String referencesStr = font.getReferences().stream()
                     .map(Key::asString)

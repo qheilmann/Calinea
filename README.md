@@ -31,7 +31,7 @@ Component left = Calinea.alignLeft("Left", 200);
 Component right = Calinea.alignRight("Right", 200);
 
 // Measure width
-int width = Calinea.measureWidth("Text");
+double width = Calinea.measureWidth("Text");
 ```
 
 ## Building

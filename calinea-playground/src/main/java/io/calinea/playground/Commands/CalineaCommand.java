@@ -3,7 +3,7 @@ package io.calinea.playground.Commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.ChatComponentArgument;
-import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import io.calinea.Calinea;
 import net.kyori.adventure.text.Component;
@@ -40,10 +40,10 @@ public final class CalineaCommand {
             // center
             .withSubcommand(new CommandAPICommand("center")
                 .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new IntegerArgument("width"))
+                .withOptionalArguments(new DoubleArgument("width"))
                 .executes((sender, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
-                    int width = (int) args.getOrDefault("width", 320);
+                    double width = (double) args.getOrDefault("width", 320.0);
                     Component centered = Calinea.center(component, width);
                     sender.sendMessage(centered);
                 })
@@ -54,7 +54,7 @@ public final class CalineaCommand {
                 .withArguments(new ChatComponentArgument("component"))
                 .executes((sender, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
-                    int width = Calinea.measureWidth(component);
+                    double width = Calinea.measureWidth(component);
 
                     //Format and send message
                     Component result = Component.text()
@@ -72,10 +72,10 @@ public final class CalineaCommand {
             // left
             .withSubcommand(new CommandAPICommand("left")
                 .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new IntegerArgument("width"))
+                .withOptionalArguments(new DoubleArgument("width"))
                 .executes((sender, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("Left"));
-                    int width = (int) args.getOrDefault("width", 100);
+                    double width = (double) args.getOrDefault("width", 100.0);
                     Component result = Calinea.alignLeft(component, width);
                     sender.sendMessage(result);
                 })
@@ -84,10 +84,10 @@ public final class CalineaCommand {
             // right
             .withSubcommand(new CommandAPICommand("right")
                 .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new IntegerArgument("width"))
+                .withOptionalArguments(new DoubleArgument("width"))
                 .executes((sender, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("Right"));
-                    int width = (int) args.getOrDefault("width", 100);
+                    double width = (double) args.getOrDefault("width", 100.0);
                     Component result = Calinea.alignRight(component, width);
                     sender.sendMessage(result);
                 })
@@ -97,12 +97,12 @@ public final class CalineaCommand {
             .withSubcommand(new CommandAPICommand("align")
                 .withArguments(new MultiLiteralArgument("alignment", "left", "right", "center"))
                 .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new IntegerArgument("width"))
+                .withOptionalArguments(new DoubleArgument("width"))
                 .executes((sender, args) -> {
                     String alignment = (String) args.getOrDefault("alignment", "left");
                     Component component = (Component) args.getOrDefault("component", Component.text("Text"));
-                    int width = (int) args.getOrDefault("width", 100);
-                    
+                    double width = (double) args.getOrDefault("width", 100.0);
+
                     Component result;
                     switch (alignment) {
                         case "left":
@@ -124,9 +124,9 @@ public final class CalineaCommand {
 
             // separator
             .withSubcommand(new CommandAPICommand("separator")
-                .withOptionalArguments(new IntegerArgument("width"))
+                .withOptionalArguments(new DoubleArgument("width"))
                 .executes((sender, args) -> {
-                    int width = (int) args.getOrDefault("width", 200);
+                    double width = (double) args.getOrDefault("width", 200.0);
                     Component separator = Calinea.separator(width);
                     sender.sendMessage(separator);
                 })

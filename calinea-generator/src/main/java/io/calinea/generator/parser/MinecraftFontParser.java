@@ -109,9 +109,11 @@ public class MinecraftFontParser {
             case "reference":
                 parseReferenceProvider(provider, fontInfo);
                 break;
-            // TODO add the space provider type
+            case "space":
+                parseSpaceProvider(provider, fontInfo);
+                break;
             default:
-                System.out.println("Unsupported provider type: " + type);
+                System.out.println("WARNING: Unsupported provider type: " + type);
         }
     }
     
@@ -159,6 +161,24 @@ public class MinecraftFontParser {
         fontInfo.addReference(referencedFontKey);
 
         System.out.println("Added font reference: " + fontId + " -> " + referencedFontKey);
+    }
+    
+    private void parseSpaceProvider(JsonNode provider, FontInfo fontInfo) throws IOException {
+        JsonNode advances = provider.get("advances");
+        
+        if (advances == null || !advances.isObject()) {
+            System.err.println("Space provider missing or invalid 'advances' object");
+            return;
+        }
+        
+        // Iterate through all advances entries
+        advances.fieldNames().forEachRemaining(charString -> {
+            int codepoint = charString.codePointAt(0);
+            double width = advances.get(charString).asDouble();
+            fontInfo.setWidth(codepoint, width);
+        });
+             
+        System.out.println("Processed space provider: " + advances.size() + " advance entries");
     }
     
     /**

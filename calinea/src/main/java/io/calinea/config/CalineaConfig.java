@@ -3,6 +3,7 @@ package io.calinea.config;
 import java.nio.file.Path;
 
 import io.calinea.logger.CalineaLogger;
+import io.calinea.models.PackInfo;
 
 public class CalineaConfig {
     private Path fontInfoPath = Path.of("./font-widths.json");
@@ -41,7 +42,7 @@ public class CalineaConfig {
 
     /**
      * Sets whether to warn when a character is missing from the font widths data.
-     * In all case when a character is missing, it will default to a width of {@link PackInfo.DEFAULT_CHAR_WIDTH}.
+     * In all case when a character is missing, it will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
      * <p>
      * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
      */
@@ -56,7 +57,7 @@ public class CalineaConfig {
 
     /**
      * Sets whether to warn when a font is missing from the font widths data.
-     * In all case when a font is missing, all its characters will default to a width of {@link PackInfo.DEFAULT_CHAR_WIDTH}.
+     * In all case when a font is missing, all its characters will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
      * <p>
      * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
      */

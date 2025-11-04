@@ -42,8 +42,8 @@ public class CalineaGeneratorTest {
         // Check each character width
         for (var entry : expected.getWidths().entrySet()) {
             int codepoint = entry.getKey();
-            int expectedWidth = entry.getValue();
-            int actualWidth = actual.getWidth(codepoint);
+            double expectedWidth = entry.getValue();
+            double actualWidth = actual.getDirectWidth(codepoint);
             assertEquals(expectedWidth, actualWidth, 
                         "Width for codepoint U+" + String.format("%04X", codepoint) + " should match");
         }
@@ -69,10 +69,10 @@ public class CalineaGeneratorTest {
         void shouldReturnErrorCodeForUnsetCharacters() {
             FontInfo font = new FontInfo(key("test_font"));
             
-            assertEquals(-1, font.getWidth('a'));
-            assertEquals(-1, font.getWidth('Z'));
-            assertEquals(-1, font.getWidth('€'));
-            assertEquals(-1, font.getWidth(0x1F600));
+            assertEquals(-1, font.getDirectWidth('a'));
+            assertEquals(-1, font.getDirectWidth('Z'));
+            assertEquals(-1, font.getDirectWidth('€'));
+            assertEquals(-1, font.getDirectWidth(0x1F600));
         }
         
         @Test
@@ -80,10 +80,10 @@ public class CalineaGeneratorTest {
             FontInfo font = new FontInfo(key("test_font"));
             
             font.setWidth('A', 8);
-            assertEquals(8, font.getWidth('A'));
+            assertEquals(8, font.getDirectWidth('A'));
             
             font.setWidth('B', 7);
-            assertEquals(7, font.getWidth('B'));
+            assertEquals(7, font.getDirectWidth('B'));
         }
         
         @Test
@@ -92,11 +92,11 @@ public class CalineaGeneratorTest {
 
             // Unicode symbol
             font.setWidth('€', 9);
-            assertEquals(9, font.getWidth('€'));
+            assertEquals(9, font.getDirectWidth('€'));
             
             // Emoji (surrogate pair)
             font.setWidth(0x1F600, 12);
-            assertEquals(12, font.getWidth(0x1F600));
+            assertEquals(12, font.getDirectWidth(0x1F600));
             
             assertEquals(2, font.getWidths().size());
         }
@@ -170,11 +170,11 @@ public class CalineaGeneratorTest {
             assertFontsEqual(font, loadedFont);
             
             // Verify specific character types
-            assertEquals(8, loadedFont.getWidth('A'));      // ASCII letter
-            assertEquals(9, loadedFont.getWidth('4'));      // ASCII digit  
-            assertEquals(9, loadedFont.getWidth('€'));      // Unicode symbol
-            assertEquals(12, loadedFont.getWidth(0x1F600)); // Emoji
-            assertEquals(-1, loadedFont.getWidth('C'));      // Unset character (default)
+            assertEquals(8, loadedFont.getDirectWidth('A'));      // ASCII letter
+            assertEquals(9, loadedFont.getDirectWidth('4'));      // ASCII digit  
+            assertEquals(9, loadedFont.getDirectWidth('€'));      // Unicode symbol
+            assertEquals(12, loadedFont.getDirectWidth(0x1F600)); // Emoji
+            assertEquals(-1, loadedFont.getDirectWidth('C'));      // Unset character (default)
         }
         
         @Test
