@@ -1,10 +1,12 @@
 package io.calinea.models;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SequencedCollection;
+import java.util.Set;
 
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -12,7 +14,7 @@ import io.calinea.Calinea;
 import net.kyori.adventure.key.Key;
 
 public class PackInfo {
-    private static final int DEFAULT_CHAR_WIDTH = 6;
+    private static final int DEFAULT_CHAR_WIDTH = 5;
 
     private Map<Key, FontInfo> fonts;
     private final int defaultWidth;
@@ -59,25 +61,70 @@ public class PackInfo {
     /**
      * Gets the width of a character in a specific font.
      * If the font or character is not found, returns the default width.
+     * Resolves references recursively.
      */
     public int getWidth(Key fontKey, int codepoint) {
+        int width = getWidth(fontKey, codepoint, new HashSet<>());
+        if (width == -1) {
+            if(Calinea.getConfig().warnOnMissingWidths()){
+                Calinea.getLogger().warning("Character '" + Character.toString(codepoint) + "' not found in font '" + fontKey.asString() + "' or its references. Using default width '" + defaultWidth + "'.");
+            }
+            return defaultWidth;
+        }
+        return width;
+    }
+    
+    /**
+     * Internal method to get width with circular reference protection.
+     * @return The width if found, or -1 if not found (caller should use defaultWidth)
+     */
+    private int getWidth(Key fontKey, int codepoint, Set<Key> visited) {
         FontInfo fontInfo = fonts.get(fontKey);
 
         if (fontInfo == null) {
             if(Calinea.getConfig().warnOnMissingFonts()){
-                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found. Using default width of '" + defaultWidth + "' for character '" + (char) codepoint + "'.");
+                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found.");
             }
-            return defaultWidth;
+            return -1; // Font not found
+        }
+        
+        // Check for circular references
+        if (visited.contains(fontKey)) {
+            if(Calinea.getConfig().verboseLogging()){
+                Calinea.getLogger().info("Circular reference detected for font '" + fontKey.asString() + "', stopping recursion.");
+            }
+            return -1; // Circular reference
+        }
+        
+        visited.add(fontKey);
+
+        try {
+            // Check direct width first
+            int width = fontInfo.getDirectWidth(codepoint);
+            if (width != -1) {
+                return width; // Found directly
+            }
+            
+            // Check references in order
+            for (Key referenceKey : fontInfo.getReferences()) {
+                // Skip if this would create a circular reference
+                if (visited.contains(referenceKey)) {
+                    if(Calinea.getConfig().verboseLogging()){
+                        Calinea.getLogger().info("Skipping circular reference from '" + fontKey.asString() + "' to '" + referenceKey.asString() + "'.");
+                    }
+                    continue; // Skip this reference, try the next one
+                }
+                
+                width = getWidth(referenceKey, codepoint, visited);
+                if (width != -1) {
+                    return width; // Found in reference
+                }
+            }
+        } finally {
+            visited.remove(fontKey);
         }
 
-        int width = fontInfo.getWidth(codepoint);
-        if (width == -1) {
-            if(Calinea.getConfig().warnOnMissingWidths()){
-                Calinea.getLogger().warning("Character '" + (char) codepoint + "' not found in font '" + fontKey.asString() + "'. Using default width '" + defaultWidth + "'.");
-            }
-            return defaultWidth;
-        }
-
-        return width;
+        // Not found anywhere in this font or its references
+        return -1;
     }
 }

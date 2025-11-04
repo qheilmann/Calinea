@@ -9,6 +9,7 @@ public class CalineaConfig {
     private CalineaLogger logger = CalineaLogger.silent();
     private boolean warnOnMissingWidths = true;
     private boolean warnOnMissingFonts = true;
+    private boolean verboseLogging = false;
 
     public Path fontInfoPath() {
         return fontInfoPath;
@@ -61,6 +62,15 @@ public class CalineaConfig {
      */
     public CalineaConfig warnOnMissingFonts(boolean warnOnMissingFonts) {
         this.warnOnMissingFonts = warnOnMissingFonts;
+        return this;
+    }
+
+    public boolean verboseLogging() {
+        return verboseLogging;
+    }
+
+    public CalineaConfig verboseLogging(boolean verboseLogging) {
+        this.verboseLogging = verboseLogging;
         return this;
     }
 }

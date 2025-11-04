@@ -66,6 +66,17 @@ public class JsonFontReader {
             Key fontKey = Key.key(rawFontKey);
             FontInfo fontInfo = new FontInfo(fontKey);
             
+            // Parse references (if any)
+            JsonNode referencesNode = fontNode.get("references");
+            if (referencesNode != null && referencesNode.isArray()) {
+                for (JsonNode referenceNode : referencesNode) {
+                    String referenceKeyString = referenceNode.asText();
+                    Key referenceKey = Key.key(referenceKeyString);
+                    fontInfo.addReference(referenceKey);
+                }
+            }
+            
+            // Parse widths (if any)
             JsonNode widthsNode = fontNode.get("widths");
             if (widthsNode != null && widthsNode.isObject()) {
                 widthsNode.fields().forEachRemaining(entry -> {

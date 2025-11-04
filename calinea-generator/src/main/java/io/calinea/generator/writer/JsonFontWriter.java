@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import net.kyori.adventure.key.Key;
+
 /**
  * Writes font width data in JSON format for easier debugging and manual editing.
  * Creates a single file containing all fonts with their character width mappings.
@@ -26,7 +28,6 @@ public class JsonFontWriter {
     private final ObjectMapper objectMapper;
     
     public JsonFontWriter() {
-        @SuppressWarnings("null")
         JsonFactory factory = JsonFactory.builder()
             .configure(JsonWriteFeature.ESCAPE_NON_ASCII, true)
             .build();
@@ -57,18 +58,28 @@ public class JsonFontWriter {
             ObjectNode fontNode = fontsArray.addObject();
             fontNode.put("fontKey", font.getFontKey().asString());
             
-            // Character widths
-            ObjectNode widthsNode = fontNode.putObject("widths");
-            Map<Integer, Integer> widths = font.getWidths();
+            // Add references if any
+            if (font.hasReferences()) {
+                ArrayNode referencesArray = fontNode.putArray("references");
+                for (Key referenceKey : font.getReferences()) {
+                    referencesArray.add(referenceKey.asString());
+                }
+            }
             
-            for (Map.Entry<Integer, Integer> entry : widths.entrySet()) {
-                int codepoint = entry.getKey();
-                int width = entry.getValue();
+            // Character widths (only if not empty)
+            Map<Integer, Integer> widths = font.getWidths();
+            if (!widths.isEmpty()) {
+                ObjectNode widthsNode = fontNode.putObject("widths");
                 
-                // Use actual character - Jackson will escape non-ASCII as Unicode
-                String key = new String(Character.toChars(codepoint));
-                
-                widthsNode.put(key, width);
+                for (Map.Entry<Integer, Integer> entry : widths.entrySet()) {
+                    int codepoint = entry.getKey();
+                    int width = entry.getValue();
+                    
+                    // Use actual character - Jackson will escape non-ASCII as Unicode
+                    String key = new String(Character.toChars(codepoint));
+                    
+                    widthsNode.put(key, width);
+                }
             }
         }
         
@@ -84,7 +95,17 @@ public class JsonFontWriter {
         // Print detailed statistics for each font
         for (FontInfo font : packInfo.getFonts().values()) {
             Map<Integer, Integer> widths = font.getWidths();
-            if (!widths.isEmpty()) {
+            if (font.hasReferences()) {
+                String referencesStr = font.getReferences().stream()
+                    .map(Key::asString)
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse("");
+                if (!widths.isEmpty()) {
+                    System.out.println("    Font '" + font.getFontKey() + "': references [" + referencesStr + "] + " + widths.size() + " overrides");
+                } else {
+                    System.out.println("    Font '" + font.getFontKey() + "': references [" + referencesStr + "]");
+                }
+            } else if (!widths.isEmpty()) {
                 int minCodepoint = widths.keySet().stream().mapToInt(Integer::intValue).min().orElse(0);
                 int maxCodepoint = widths.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
                 System.out.println("    Font '" + font.getFontKey() + "': " + widths.size() + 

@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Parses Minecraft resource pack fonts and extracts character width information.
@@ -32,7 +34,7 @@ public class MinecraftFontParser {
     public PackInfo parseResourcePack(Path resourcePackPath) throws IOException {
         List<FontInfo> fonts = new ArrayList<>();
         
-        Path fontsDir = resourcePackPath.resolve("assets/minecraft/font");
+        Path fontsDir = resourcePackPath.resolve("assets/minecraft/font"); // TODO more path at each assets/<namespace>/font
         if (!Files.exists(fontsDir)) {
             throw new IOException("Font directory not found: " + fontsDir);
         }
@@ -53,6 +55,10 @@ public class MinecraftFontParser {
         
 
         PackInfo packInfo = new PackInfo(fonts);
+        
+        // Validate that all font references exist in the parsed font collection
+        validateFontReferences(packInfo);
+        
         return packInfo;
     }
     
@@ -82,7 +88,10 @@ public class MinecraftFontParser {
             case "bitmap":
                 parseBitmapProvider(provider, fontInfo, fontDir);
                 break;
-            // TODO handle at least the reference provider
+            case "reference":
+                parseReferenceProvider(provider, fontInfo);
+                break;
+            // TODO add the space provider type
             default:
                 System.out.println("Unsupported provider type: " + type);
         }
@@ -124,65 +133,72 @@ public class MinecraftFontParser {
         }
     }
     
-    /**
-     * Resolves a Minecraft texture path (namespace:path) to an absolute file path.
-     * Example: "ttt:font/symbols/energy.png" -> "assets/ttt/textures/font/symbols/energy.png"
-     */
-    private Path resolveTexturePath(String fileLocation, Path fontDir) {
-        String namespace;
-        String path;
+    private void parseReferenceProvider(JsonNode provider, FontInfo fontInfo) throws IOException {
+        String fontId = provider.get("id").asText();
+        Key referencedFontKey = Key.key(fontId);
         
-        if (fileLocation.contains(":")) {
-            String[] parts = fileLocation.split(":", 2);
-            namespace = parts[0];
-            path = parts[1];
-        } else {
-            namespace = "minecraft";
-            path = fileLocation;
-        }
-        
-        Path resourcePackRoot = findResourcePackRoot(fontDir);
-        return resourcePackRoot.resolve("assets").resolve(namespace).resolve("textures").resolve(path);
-    }
+        // Add the reference to this font (no need to parse or merge immediately)
+        fontInfo.addReference(referencedFontKey);
 
-    @SuppressWarnings("null")
-    private Key resolveFontKey(Path fontFile) {
-        String fileName = fontFile.getFileName().toString().replace(".json", "");
-        String namespace = extractNamespaceFromFontPath(fontFile);
-        
-        return Key.key(namespace, fileName);
+        System.out.println("Added font reference: " + fontId + " -> " + referencedFontKey);
     }
     
     /**
-     * Extracts the namespace from a font file path.
-     * The namespace is the directory name directly under assets/ in the path structure:
-     * <packroot>/assets/<namespace>/font/<fontKeyName>
-     * 
-     * @param fontFile The path to the font file
-     * @return The namespace (e.g., "minecraft", "ttt")
-     * @throws IllegalArgumentException if the path structure is invalid
+     * Resolves a resourceLocation texture path (namespace:path) to an absolute file path.
+     * Example: "ttt:font/symbols/energy.png" -> "assets/ttt/textures/font/symbols/energy.png"
      */
-    private String extractNamespaceFromFontPath(Path fontFile) {
-        // Find the resource pack root first
+    private Path resolveTexturePath(String resourceLocation, Path fontDir) {
+        Key key = Key.key(resourceLocation);
+        String namespace = key.namespace();
+        String path = key.value();
+
+        Path resourcePackRoot = findResourcePackRoot(fontDir);
+        return resourcePackRoot.resolve("assets").resolve(namespace).resolve("textures").resolve(path);
+    }
+    
+    /**
+     * Resolves the font key from a font file path.
+     * Example: path/to/resourcepack/assets/ttt/font/symbols/energy.json -> Key("ttt", "symbols/energy")
+     */
+    private Key resolveFontKey(Path fontFile) {
         Path resourcePackRoot = findResourcePackRoot(fontFile.getParent());
-        
-        // Get the relative path from resource pack root to the font file
         Path relativePath = resourcePackRoot.relativize(fontFile);
         
-        // Expected structure: assets/<namespace>/font/<fontfile>.json
-        if (relativePath.getNameCount() < 3) {
+        // Expected structure: assets/<namespace>/font/<optionalSubfolder>/<fontfile>.json
+        if (relativePath.getNameCount() < 4) {
             throw new IllegalArgumentException("Invalid font file path structure: " + fontFile);
         }
         
         if (!"assets".equals(relativePath.getName(0).toString())) {
-            throw new IllegalArgumentException("Font file must be under assets directory: " + fontFile);
+            throw new IllegalArgumentException("Font file must be under 'assets' directory: " + fontFile);
         }
         
         if (!"font".equals(relativePath.getName(2).toString())) {
-            throw new IllegalArgumentException("Font file must be in font directory: " + fontFile);
+            throw new IllegalArgumentException("Font file must be in 'font' directory: " + fontFile);
         }
         
-        return relativePath.getName(1).toString();
+        String namespace = relativePath.getName(1).toString();
+        
+        // Build the font path from the font directory onwards (excluding assets/<namespace>/font/)
+        StringBuilder fontPathBuilder = new StringBuilder();
+        for (int i = 3; i < relativePath.getNameCount(); i++) {
+            // Append path separator if not the first component
+            if (fontPathBuilder.length() > 0) {
+                fontPathBuilder.append("/");
+            }
+            
+            String pathComponent = relativePath.getName(i).toString();
+            
+            // Remove .json extension from the last component (filename)
+            String jsonExt = ".json";
+            if (i == relativePath.getNameCount() - 1 && pathComponent.endsWith(jsonExt)) {
+                pathComponent = pathComponent.substring(0, pathComponent.length() - jsonExt.length());
+            }
+            
+            fontPathBuilder.append(pathComponent);
+        }
+        
+        return Key.key(namespace, fontPathBuilder.toString());
     }
     
     /**
@@ -279,5 +295,33 @@ public class MinecraftFontParser {
 
     private int codepointLength(String string) {
         return string.codePointCount(0, string.length());
+    }
+    
+    /**
+     * Validates that all font references point to fonts that exist in the pack.
+     * Prints warnings for any missing references.
+     */
+    private void validateFontReferences(PackInfo packInfo) {
+        Set<Key> availableFonts = packInfo.getFonts().keySet();
+        Set<Key> missingReferences = new HashSet<>();
+        
+        // Check each font's references
+        for (FontInfo fontInfo : packInfo.getFonts().values()) {
+            for (Key reference : fontInfo.getReferences()) {
+                if (!availableFonts.contains(reference)) {
+                    missingReferences.add(reference);
+                }
+            }
+        }
+        
+        // Print warnings for missing references
+        if (!missingReferences.isEmpty()) {
+            System.err.println("WARNING: Found " + missingReferences.size() + " missing font reference(s):");
+            for (Key missingRef : missingReferences) {
+                System.err.println("  - " + missingRef.asString() + " (referenced but not found in pack)");
+            }
+        } else {
+            System.out.println("All font references are valid");
+        }
     }
 }
