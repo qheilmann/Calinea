@@ -53,9 +53,15 @@ public class ComponentMeasurer {
         }
         
         double totalWidth = 0;
-        for (char c : text.toCharArray()) {
-            totalWidth += getCharWidth(fontKey, c);
+
+        int codepointLength = text.codePointCount(0, text.length());
+        for (int colIndex = 0; colIndex < codepointLength; colIndex++) {
+            int codepointIndex = text.offsetByCodePoints(0, colIndex);
+            int codepoint = text.codePointAt(codepointIndex);
+
+            totalWidth += getCharWidth(fontKey, codepoint);
         }
+
         return totalWidth;
     }
     
@@ -65,11 +71,11 @@ public class ComponentMeasurer {
      * @param c the character
      * @return width in pixels
      */
-    private static double getCharWidth(Key fontKey, char c) {
+    private static double getCharWidth(Key fontKey, int codepoint) {
 
         PackInfo packInfo = Calinea.TMPgetPackInfo();
 
-        return packInfo.getWidth(fontKey, c);
+        return packInfo.getWidth(fontKey, codepoint);
     }
     
     /**
