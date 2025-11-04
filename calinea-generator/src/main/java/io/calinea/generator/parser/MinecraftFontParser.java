@@ -34,25 +34,43 @@ public class MinecraftFontParser {
     public PackInfo parseResourcePack(Path resourcePackPath) throws IOException {
         List<FontInfo> fonts = new ArrayList<>();
         
-        Path fontsDir = resourcePackPath.resolve("assets/minecraft/font"); // TODO more path at each assets/<namespace>/font
-        if (!Files.exists(fontsDir)) {
-            throw new IOException("Font directory not found: " + fontsDir);
+        Path assetsDir = resourcePackPath.resolve("assets");
+        if (!Files.exists(assetsDir)) {
+            throw new IOException("Assets directory not found: " + assetsDir);
         }
         
-        // Look for font definition files (*.json)
-        Files.list(fontsDir)
-             .filter(path -> path.toString().endsWith(".json"))
-             .forEach(fontFile -> {
-                 try {
-                     FontInfo fontInfo = parseFontFile(fontFile);
-                     if (fontInfo != null) {
-                         fonts.add(fontInfo);
+        // Scan all namespaces under assets/
+        Files.list(assetsDir)
+             .filter(Files::isDirectory)
+             .forEach(namespaceDir -> {
+                 Path fontDir = namespaceDir.resolve("font");
+                 if (Files.exists(fontDir)) {
+                     try {
+                         // Recursively find all .json font files in this namespace's font directory
+                         Files.walk(fontDir)
+                              .filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".json"))
+                              .forEach(fontFile -> {
+                                  try {
+                                      FontInfo fontInfo = parseFontFile(fontFile);
+                                      if (fontInfo != null) {
+                                          fonts.add(fontInfo);
+                                          System.out.println("Parsed font: " + fontInfo.getFontKey().asString() + " from " + fontFile);
+                                      }
+                                  } catch (Exception e) {
+                                      System.err.println("Failed to parse font file " + fontFile + ": " + e.getMessage());
+                                  }
+                              });
+                     } catch (IOException e) {
+                         System.err.println("Failed to scan font directory " + fontDir + ": " + e.getMessage());
                      }
-                 } catch (Exception e) {
-                     System.err.println("Failed to parse font file " + fontFile + ": " + e.getMessage());
                  }
              });
         
+        if (fonts.isEmpty()) {
+            System.out.println("No font files found in resource pack: " + resourcePackPath);
+        } else {
+            System.out.println("Found " + fonts.size() + " font(s) in resource pack");
+        }
 
         PackInfo packInfo = new PackInfo(fonts);
         
