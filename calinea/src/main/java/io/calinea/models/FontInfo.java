@@ -57,11 +57,17 @@ public class FontInfo {
     /**
      * Gets the direct width for a specific codepoint from this font only.
      * Does not resolve references, use {@link PackInfo#getWidth(Key, int)} for that.
-     * @return -1.0 if no specific width is set.
+     * @return WidthResult containing the width if found, or MISSING_WIDTH status if not set.
      */
-    public double getDirectWidth(int codepoint) {
-        return widths.getOrDefault(codepoint, MISSING_WIDTH);
+    public WidthResult getDirectWidth(int codepoint) {
+        Double width = widths.get(codepoint);
+        if (width != null) {
+            return WidthResult.found(width);
+        }
+        return WidthResult.missingWidth();
     }
+
+
     
     @Override
     public String toString() {
