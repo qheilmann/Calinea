@@ -49,7 +49,6 @@ public class CalineaGeneratorTest {
         }
     }
 
-    @SuppressWarnings("null")
     private Key key(String name) {
         return Key.key("test", name);
     }

@@ -26,6 +26,9 @@
         "org.jetbrains.annotations.NotNullByDefault",
         "org.jspecify.annotations.NullMarked"
     ],
+    "java.compile.nullAnalysis.nullunmarked" : [
+        "org.jspecify.annotations.NullUnmarked"
+    ],
     "java.settings.url": ".vscode/jdt.core.prefs",
     "java.configuration.updateBuildConfiguration": "automatic",
     

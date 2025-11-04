@@ -18,7 +18,6 @@ public class JsonFontReader {
         private final ObjectMapper objectMapper;
     
     public JsonFontReader() {
-        @SuppressWarnings("null")
         JsonFactory factory = JsonFactory.builder()
             .configure(JsonWriteFeature.ESCAPE_NON_ASCII, true)
             .build();
