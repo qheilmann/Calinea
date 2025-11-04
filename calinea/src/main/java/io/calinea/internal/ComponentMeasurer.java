@@ -1,5 +1,7 @@
 package io.calinea.internal;
 
+import org.jspecify.annotations.Nullable;
+
 import io.calinea.Calinea;
 import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
@@ -30,13 +32,10 @@ public class ComponentMeasurer {
      * @return approximate width in pixels
      */
     public static double measureComponent(Component component) {
-        if (component == null) {
-            return 0;
-        }
-        
         // Convert component to plain text for now
         String text = PlainTextComponentSerializer.plainText().serialize(component);
-        Key fontKey = component.font() != null ? component.font() : Key.key("minecraft:default");
+        @Nullable Key font = component.font();
+        Key fontKey = font != null ? font : Key.key("minecraft:default");
 
         return measureText(fontKey, text);
     }
@@ -48,7 +47,7 @@ public class ComponentMeasurer {
      * @return approximate width in pixels
      */
     private static double measureText(Key fontKey, String text) {
-        if (text == null || text.isEmpty()) {
+        if (text.isEmpty()) {
             return 0;
         }
         
@@ -72,8 +71,12 @@ public class ComponentMeasurer {
      * @return width in pixels
      */
     private static double getCharWidth(Key fontKey, int codepoint) {
-
-        PackInfo packInfo = Calinea.TMPgetPackInfo();
+        @Nullable PackInfo packInfo = Calinea.TMPgetPackInfo();
+        
+        if (packInfo == null) {
+            // Fallback to default width if pack info is not loaded yet
+            return PackInfo.DEFAULT_CHAR_WIDTH;
+        }
 
         return packInfo.getWidth(fontKey, codepoint);
     }

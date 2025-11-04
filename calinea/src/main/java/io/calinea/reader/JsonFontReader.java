@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Path;
+
+import org.jspecify.annotations.Nullable;
+
 import io.calinea.models.FontInfo;
 import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
@@ -51,7 +54,7 @@ public class JsonFontReader {
         }
         double defaultWidth = defaultWidthNode.asDouble();
 
-        JsonNode fontsArray = root.get("fonts");
+        @Nullable JsonNode fontsArray = root.get("fonts");
         if (fontsArray == null || !fontsArray.isArray()) {
             throw new IOException("Missing or invalid 'fonts' array in JSON file");
         }
@@ -59,15 +62,19 @@ public class JsonFontReader {
         PackInfo packInfo = new PackInfo(defaultWidth);
         
         for (JsonNode fontNode : fontsArray) {
-            String rawFontKey = fontNode.get("fontKey").asText();
-            if (rawFontKey == null || rawFontKey.isEmpty()) {
+            @Nullable JsonNode fontKeyNode = fontNode.get("fontKey");
+            if (fontKeyNode == null) {
+                throw new IOException("Missing 'fontKey' in font entry");
+            }
+            String rawFontKey = fontKeyNode.asText();
+            if (rawFontKey.isEmpty()) {
                 throw new IOException("Missing or invalid 'fontKey' in font entry");
             }
             Key fontKey = Key.key(rawFontKey);
             FontInfo fontInfo = new FontInfo(fontKey);
             
             // Parse references (if any)
-            JsonNode referencesNode = fontNode.get("references");
+            @Nullable JsonNode referencesNode = fontNode.get("references");
             if (referencesNode != null && referencesNode.isArray()) {
                 for (JsonNode referenceNode : referencesNode) {
                     String referenceKeyString = referenceNode.asText();
@@ -77,7 +84,7 @@ public class JsonFontReader {
             }
             
             // Parse widths (if any)
-            JsonNode widthsNode = fontNode.get("widths");
+            @Nullable JsonNode widthsNode = fontNode.get("widths");
             if (widthsNode != null && widthsNode.isObject()) {
                 widthsNode.fields().forEachRemaining(entry -> {
                     String key = entry.getKey();

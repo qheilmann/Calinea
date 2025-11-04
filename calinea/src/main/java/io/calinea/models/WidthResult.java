@@ -4,7 +4,7 @@ package io.calinea.models;
  * Wrapper class to distinguish between valid widths (including negative) and error states.
  */
 public class WidthResult {
-    
+
     private final double width;
     private final Status status;
 

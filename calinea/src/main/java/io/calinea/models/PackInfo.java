@@ -9,14 +9,12 @@ import java.util.SequencedCollection;
 import java.util.Set;
 
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 
 import io.calinea.Calinea;
 import net.kyori.adventure.key.Key;
 
 public class PackInfo {
-    public static final double MISSING_WIDTH = FontInfo.MISSING_WIDTH;
-    public static final double MISSING_FONT = -2.0;
-    public static final double CIRCULAR_REFERENCE = -3.0;
 
     public static final double DEFAULT_CHAR_WIDTH = 5.0;
 
@@ -49,7 +47,7 @@ public class PackInfo {
         return this;
     }
 
-    public FontInfo getFont(Key key) {
+    public @Nullable FontInfo getFont(Key key) {
         return fonts.get(key);
     }
 

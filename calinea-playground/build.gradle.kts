@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":calinea"))
     compileOnly(libs.paper.api)
     implementation(libs.commandapi)
+    
+    // Null safety annotations
+    implementation(libs.jspecify)
 }
 
 tasks.shadowJar {

@@ -11,9 +11,21 @@ java {
     withJavadocJar()
 }
 
+// Add null safety annotations project-wide
+tasks.withType<JavaCompile> {
+    options.compilerArgs.addAll(listOf(
+        // Enable JSpecify support in compatible tools
+        "-Xmaxerrs", "1000",
+        "-Xmaxwarns", "1000"
+    ))
+}
+
 dependencies {
     api(libs.bundles.adventure)
     implementation(libs.bundles.jackson)
+    
+    // Null safety annotations
+    api(libs.jspecify)
     
     // Optional logging adapters
     compileOnly(libs.log4j.api)

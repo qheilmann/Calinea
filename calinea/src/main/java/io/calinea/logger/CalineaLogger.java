@@ -4,6 +4,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.jspecify.annotations.Nullable;
+
 import io.calinea.Calinea;
 
 // pick from CommandAPI's logger interface implementation
@@ -40,7 +42,7 @@ public interface CalineaLogger {
 		);
 	}
 
-	static CalineaLogger bindToMethods(Consumer<String> info, Consumer<String> warning, Consumer<String> severe, BiConsumer<String, Throwable> severeException) {
+	static CalineaLogger bindToMethods(Consumer<String> info, Consumer<String> warning, Consumer<String> severe, BiConsumer<String, @Nullable Throwable> severeException) {
 		return new CalineaLogger() {
 			@Override
 			public void info(String message) {
@@ -58,7 +60,7 @@ public interface CalineaLogger {
 			}
 			
 			@Override
-			public void severe(String message, Throwable exception) {
+			public void severe(String message, @Nullable Throwable exception) {
 				severeException.accept(message, exception);
 			}
 		};
@@ -70,5 +72,5 @@ public interface CalineaLogger {
 
 	void severe(String message);
 	
-	void severe(String message, Throwable exception);
+	void severe(String message, @Nullable Throwable exception);
 }

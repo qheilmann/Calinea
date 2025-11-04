@@ -11,7 +11,6 @@ import net.kyori.adventure.key.Key;
  * Represents font information including character widths and references.
  */
 public class FontInfo {
-    public static final Double MISSING_WIDTH = -1.0;
 
     private final Key fontKey;
     private final Map<Integer, Double> widths; // codepoint -> width

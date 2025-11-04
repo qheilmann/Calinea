@@ -12,6 +12,10 @@ java {
 dependencies {
     implementation(project(":calinea"))
     implementation(libs.bundles.jackson)
+    
+    // Null safety annotations
+    implementation(libs.jspecify)
+    
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
 }

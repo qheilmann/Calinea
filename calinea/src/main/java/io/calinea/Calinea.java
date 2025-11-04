@@ -2,6 +2,7 @@ package io.calinea;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import io.calinea.config.CalineaConfig;
@@ -9,8 +10,6 @@ import io.calinea.internal.ComponentMeasurer;
 import io.calinea.logger.CalineaLogger;
 import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontReader;
-
-//TODO add nullmarked jspecify
 /**
  * Calinea - Adventure Component Manipulation Library
  * 
@@ -29,8 +28,8 @@ public class Calinea {
     public static final String NAMESPACE = "calinea";
     public static final String LIBRARY_NAME = "Calinea";
 
-    private static PackInfo packInfo;
-    private static CalineaConfig config;
+    private static @Nullable PackInfo packInfo;
+    private static @Nullable CalineaConfig config;
 
     public static void onLoad(CalineaConfig config) {
         Calinea.config = config;
@@ -48,7 +47,7 @@ public class Calinea {
         return getConfig().logger();
     }
 
-    public static PackInfo TMPgetPackInfo() {
+    public static @Nullable PackInfo TMPgetPackInfo() {
         return packInfo;
     }
 

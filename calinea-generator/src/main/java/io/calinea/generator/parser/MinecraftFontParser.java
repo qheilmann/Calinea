@@ -2,6 +2,7 @@ package io.calinea.generator.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jspecify.annotations.Nullable;
 
 import io.calinea.models.FontInfo;
 import io.calinea.models.PackInfo;
@@ -89,7 +90,7 @@ public class MinecraftFontParser {
         Key fontKey = resolveFontKey(fontFile);
         FontInfo fontInfo = new FontInfo(fontKey);
         
-        JsonNode providers = root.get("providers");
+        @Nullable JsonNode providers = root.get("providers");
         if (providers != null && providers.isArray()) {
             for (JsonNode provider : providers) {
                 parseProvider(provider, fontInfo, fontFile.getParent());
@@ -120,7 +121,7 @@ public class MinecraftFontParser {
     private void parseBitmapProvider(JsonNode provider, FontInfo fontInfo, Path fontDir) throws IOException {
         // Parse bitmap font provider
         String fileLocation = provider.get("file").asText();
-        JsonNode chars = provider.get("chars");
+        @Nullable JsonNode chars = provider.get("chars");
         
         if (chars == null || !chars.isArray() || chars.size() == 0) {
             return;
@@ -164,7 +165,7 @@ public class MinecraftFontParser {
     }
     
     private void parseSpaceProvider(JsonNode provider, FontInfo fontInfo) throws IOException {
-        JsonNode advances = provider.get("advances");
+        @Nullable JsonNode advances = provider.get("advances");
         
         if (advances == null || !advances.isObject()) {
             System.err.println("Space provider missing or invalid 'advances' object");

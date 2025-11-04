@@ -31,6 +31,9 @@ commandapi = "11.0.0"
 # Build plugins
 shadow = "9.2.2"
 
+# Null Safety
+jspecify = "1.0.0"
+
 [libraries]
 # Adventure Components (main library dependency)
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
@@ -54,6 +57,9 @@ commandapi = { module = "dev.jorel:commandapi-paper-shade", version.ref = "comma
 # Generator dependencies
 jackson-core = "com.fasterxml.jackson.core:jackson-core:2.18.0"
 jackson-databind = "com.fasterxml.jackson.core:jackson-databind:2.18.0"
+
+# Null Safety
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

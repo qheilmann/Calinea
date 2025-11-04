@@ -1,5 +1,7 @@
 package io.calinea.generator;
 
+import org.jspecify.annotations.Nullable;
+
 import io.calinea.generator.parser.MinecraftFontParser;
 import io.calinea.generator.writer.JsonFontWriter;
 import io.calinea.models.PackInfo;
@@ -65,7 +67,7 @@ public class CalineaGenerator {
      * @return the version string, or "dev" if not available
      */
     private static String getVersion() {
-        String version = CalineaGenerator.class.getPackage().getImplementationVersion();
+        @Nullable String version = CalineaGenerator.class.getPackage().getImplementationVersion();
         return (version != null && !version.isEmpty()) ? version : "dev";
     }
     
