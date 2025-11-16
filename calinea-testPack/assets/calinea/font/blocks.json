@@ -1,0 +1,60 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/1.png",
+            "height": 12,
+            "ascent": 10,
+            "chars": ["\uF201"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/10.png",
+            "height": 12,
+            "ascent": 10,
+            "chars": ["\uF210"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/16.png",
+            "height": 12,
+            "ascent": 10,
+            "chars": ["\uF216"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/100.png",
+            "height": 12,
+            "ascent": 10,
+            "chars": ["\uF299"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/1x1.png",
+            "height": 1,
+            "ascent": 1,
+            "chars": ["\uF301"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/10x10.png",
+            "height": 10,
+            "ascent": 10,
+            "chars": ["\uF310"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/16x16.png",
+            "height": 16,
+            "ascent": 16,
+            "chars": ["\uF316"]
+        },
+        {
+            "type": "bitmap",
+            "file": "calinea:font/blocks/100x100.png",
+            "height": 100,
+            "ascent": 100,
+            "chars": ["\uF399"]
+        }
+    ]
+}
