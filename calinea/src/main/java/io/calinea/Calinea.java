@@ -1,15 +1,18 @@
 package io.calinea;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.nio.file.Path;
+
 import org.jspecify.annotations.Nullable;
 
-import java.nio.file.Path;
 import io.calinea.config.CalineaConfig;
-import io.calinea.internal.ComponentMeasurer;
 import io.calinea.logger.CalineaLogger;
+import io.calinea.measurer.ComponentMeasurer;
+import io.calinea.measurer.ComponentMeasurerConfig;
 import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontReader;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 /**
  * Calinea - Adventure Component Manipulation Library
  * 
@@ -151,7 +154,8 @@ public class Calinea {
      * @return width in pixels
      */
     public static double measureWidth(Component component) {
-        return ComponentMeasurer.measureComponent(component);
+        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
+        return measurer.measure(component);
     }
     
     /**

@@ -27,6 +27,9 @@ dependencies {
     // Null safety annotations
     api(libs.jspecify)
     
+    // Paper API for selector resolution (compileOnly = not bundled, user provides it)
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    
     // Optional logging adapters
     compileOnly(libs.log4j.api)
     compileOnly(libs.slf4j.api)

@@ -24,24 +24,38 @@ public class CalineaPlayground extends JavaPlugin {
     public static final String PLUGIN_NAME = "CalineaPlayground";
     public static final String NAMESPACE = "calinea_playground";
     ComponentLogger LOGGER = ComponentLogger.logger(PLUGIN_NAME);
-    
+    private boolean failOnload = false;
+
     @Override
     public void onLoad() {
         try {
-            onLoadCommandAPI();
-        } catch (Exception e) {
-            LOGGER.error("Failed to initialize command API: " + e.getMessage());
-        }
+            
+            try {
+                onLoadCommandAPI();
+            } catch (Exception e) {
+                LOGGER.error("Failed to initialize command API: " + e.getMessage());
+                throw e;
+            }
 
-        try  {
-        	onLoadCalinea();
+            try  {
+                onLoadCalinea();
+            } catch (Exception e) {
+                LOGGER.error("Failed to load Calinea: " + e.getMessage());
+                throw e;
+            }
         } catch (Exception e) {
-        	LOGGER.error("Failed to load Calinea: " + e.getMessage());
+            failOnload = true;
         }
     }
 
     @Override
     public void onEnable() {
+        if (failOnload) {
+            LOGGER.error("Calinea Playground failed to load correctly, disabling plugin.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         CommandAPI.onEnable();
 
         CalineaCommand.register();
@@ -56,7 +70,7 @@ public class CalineaPlayground extends JavaPlugin {
     
     private void onLoadCalinea() {
         // Path fontInfoPath = Path.of(getDataFolder().toString(), "font-widths.json");
-        Path fontInfoPath = Path.of("D:\\dev\\Minecraft\\lib\\Calinea\\calinea-output\\font-widths.json");
+        Path fontInfoPath = Path.of("D:\\dev\\Minecraft\\_project\\Calinea\\calinea-output\\font-widths.json");
 
         CalineaConfig config = new CalineaConfig()
             .fontInfoPath(fontInfoPath)

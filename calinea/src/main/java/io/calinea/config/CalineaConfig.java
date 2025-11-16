@@ -10,6 +10,7 @@ public class CalineaConfig {
     private CalineaLogger logger = CalineaLogger.silent();
     private boolean warnOnMissingWidths = true;
     private boolean warnOnMissingFonts = true;
+    private boolean warnOnUnresolvedSelectorComponents = true;
     private boolean verboseLogging = false;
 
     public Path fontInfoPath() {
@@ -43,8 +44,6 @@ public class CalineaConfig {
     /**
      * Sets whether to warn when a character is missing from the font widths data.
      * In all case when a character is missing, it will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
-     * <p>
-     * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
      */
     public CalineaConfig warnOnMissingWidths(boolean warnOnMissingFontWidths) {
         this.warnOnMissingWidths = warnOnMissingFontWidths;
@@ -58,12 +57,27 @@ public class CalineaConfig {
     /**
      * Sets whether to warn when a font is missing from the font widths data.
      * In all case when a font is missing, all its characters will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
-     * <p>
-     * Note you need to pass a logger implementation with {@link #logger(CalineaLogger)} for warnings to be logged. </p>
      */
     public CalineaConfig warnOnMissingFonts(boolean warnOnMissingFonts) {
         this.warnOnMissingFonts = warnOnMissingFonts;
         return this;
+    }
+
+    /**
+     * Sets whether to warn when measuring unresolved SelectorComponents.
+     * SelectorComponents must be resolved server-side before being passed to Calinea for accurate measurement.
+     * When unresolved, Calinea falls back to measuring the raw selector pattern as text.
+     */
+    public CalineaConfig warnOnUnresolvedSelectorComponents(boolean warnOnUnresolvedSelectorComponents) {
+        this.warnOnUnresolvedSelectorComponents = warnOnUnresolvedSelectorComponents;
+        return this;
+    }
+
+    /**
+     * Gets whether to warn when measuring unresolved SelectorComponents.
+     */
+    public boolean warnOnUnresolvedSelectorComponents() {
+        return warnOnUnresolvedSelectorComponents;
     }
 
     public boolean verboseLogging() {
