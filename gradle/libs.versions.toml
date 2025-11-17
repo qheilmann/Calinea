@@ -2,7 +2,8 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-# Core libraries
+# Adventure
+# https://mvnrepository.com/artifact/net.kyori/adventure-api
 adventure = "4.25.0"
 
 # Logging (optional adapters)
@@ -13,25 +14,28 @@ slf4j = "2.0.17"
 
 # Testing
 # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-junit-jupiter = "6.0.0"
+junit-jupiter = "6.0.1"
 # https://mvnrepository.com/artifact/org.mockito/mockito-core
-mockito = "5.18.0"
+mockito = "5.20.0"
 
 # Minecraft/Paper (for playground)
 # Paper API
-# https://repo.papermc.io/#browse/browse:maven-snapshots:io%2Fpapermc%2Fpaper%2Fpaper-api
+# https://repo.papermc.io/ui/packages?name=io.papermc.paper%3Apaper-api&type=packages
 # Don't forget to update the api version paper-plugin.yml
 # you can see api-version pattern here https://docs.papermc.io/paper/dev/getting-started/paper-plugins/
-paper-api = "1.21.8-R0.1-SNAPSHOT"
+# paper-api = "1.21.8-R0.1-SNAPSHOT"
+paper-api = "1.21.10-R0.1-20251114.162035-42"
 
 # CommandAPI: An API for the command UI introduced in Minecraft 1.13
 # https://central.sonatype.com/artifact/dev.jorel/commandapi-paper-shade
 commandapi = "11.0.0"
 
 # Build plugins
+# https://plugins.gradle.org/plugin/com.gradleup.shadow
 shadow = "9.2.2"
 
 # Null Safety
+# https://mvnrepository.com/artifact/org.jspecify/jspecify
 jspecify = "1.0.0"
 
 [libraries]
