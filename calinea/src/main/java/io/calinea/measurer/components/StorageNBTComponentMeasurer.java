@@ -1,17 +1,13 @@
 package io.calinea.measurer.components;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.ComponentMeasurerConfig;
 import io.calinea.measurer.IComponentMeasurer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.StorageNBTComponent;
 
 public class StorageNBTComponentMeasurer implements IComponentMeasurer<StorageNBTComponent>{
-    ComponentMeasurerConfig config;
 
-    public StorageNBTComponentMeasurer(ComponentMeasurerConfig config) {
-        this.config = config;
-    }
+    public StorageNBTComponentMeasurer() {}
 
     @Override
     public boolean canHandle(Component component) {
@@ -25,7 +21,12 @@ public class StorageNBTComponentMeasurer implements IComponentMeasurer<StorageNB
 
         // Warn that an unresolved StorageNBTComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format("Unresolved StorageNBTComponent detected - '%s'. It should be resolved server-side before measurement. Falling back to an empty component. This may indicate that the component was not properly resolved before using the %s API.", component.storage(), Calinea.LIBRARY_NAME));
+            Calinea.getLogger().warning(String.format(
+                "Unresolved StorageNBTComponent detected - '%s'. " +
+                "It should be resolved server-side before measurement. " +
+                "Falling back to an empty component. " +
+                "This may indicate that the component was not properly resolved before using the %s API.",
+                component.storage(), Calinea.LIBRARY_NAME));
         }
 
         return 0;

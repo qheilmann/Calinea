@@ -2,8 +2,9 @@ package io.calinea.measurer;
 
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import io.calinea.measurer.components.BlockNBTComponentMeasurer;
+import org.jspecify.annotations.Nullable;
+
+import io.calinea.measurer.components.ObjectComponentMeasurer;
 import io.calinea.measurer.components.EntityNBTComponentMeasurer;
 import io.calinea.measurer.components.ScoreComponentMeasurer;
 import io.calinea.measurer.components.SelectorComponentMeasurer;
@@ -19,18 +20,16 @@ import net.kyori.adventure.text.format.Style.Merge;
  * based on the component type using polymorphism.
  */
 public class ComponentMeasurer {
-    private final ComponentMeasurerConfig config;
     private final List<IComponentMeasurer<?>> measurers;
 
     public ComponentMeasurer(ComponentMeasurerConfig config) {
-        this.config = config;
         this.measurers = List.of(
             new TextComponentMeasurer(config),
             new SelectorComponentMeasurer(config),
-            new ScoreComponentMeasurer(config),
-            new BlockNBTComponentMeasurer(config),
-            new EntityNBTComponentMeasurer(config),
-            new StorageNBTComponentMeasurer(config)
+            new ScoreComponentMeasurer(),
+            new ObjectComponentMeasurer(config),
+            new EntityNBTComponentMeasurer(),
+            new StorageNBTComponentMeasurer()
             // TODO
             // Add other measurer implementations here as you create them
             // new TranslatableComponentMeasurer(config),
@@ -38,6 +37,8 @@ public class ComponentMeasurer {
             // etc.
             // All serverSide component must be resolved before here, and if not resolve use the client fallback renderer and warn
             // All clientSide component can be resolved before here, and if not calinea resolved use the right fallback and maybe warn
+
+            // TODO maybe auto asisng direcly on class, with a consummer or something to have the config object ?
         );
     }
 

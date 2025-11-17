@@ -1,17 +1,13 @@
 package io.calinea.measurer.components;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.ComponentMeasurerConfig;
 import io.calinea.measurer.IComponentMeasurer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.EntityNBTComponent;
 
 public class EntityNBTComponentMeasurer implements IComponentMeasurer<EntityNBTComponent>{
-    ComponentMeasurerConfig config;
 
-    public EntityNBTComponentMeasurer(ComponentMeasurerConfig config) {
-        this.config = config;
-    }
+    public EntityNBTComponentMeasurer() {}
 
     @Override
     public boolean canHandle(Component component) {
@@ -25,7 +21,12 @@ public class EntityNBTComponentMeasurer implements IComponentMeasurer<EntityNBTC
 
         // Warn that an unresolved EntityNBTComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format("Unresolved EntityNBTComponent detected - '%s'. It should be resolved server-side before measurement. Falling back to an empty component. This may indicate that the component was not properly resolved before using the %s API.", component.selector(), Calinea.LIBRARY_NAME));
+            Calinea.getLogger().warning(String.format(
+                "Unresolved EntityNBTComponent detected - '%s'. " +
+                "It should be resolved server-side before measurement. " +
+                "Falling back to an empty component. " +
+                "This may indicate that the component was not properly resolved before using the %s API.",
+                component.selector(), Calinea.LIBRARY_NAME));
         }
 
         return 0;

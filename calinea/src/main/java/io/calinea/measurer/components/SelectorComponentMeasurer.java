@@ -35,7 +35,12 @@ public class SelectorComponentMeasurer implements IComponentMeasurer<SelectorCom
 
         // Warn that an unresolved SelectorComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format("Unresolved SelectorComponent detected - '%s'. It should be resolved server-side before measurement. Falling back to the pattern itself (%.1f pixels). This may indicate that the component was not properly resolved before using the %s API.", pattern, width, Calinea.LIBRARY_NAME));
+            Calinea.getLogger().warning(String.format(
+                "Unresolved SelectorComponent detected - '%s'. " +
+                "It should be resolved server-side before measurement. " +
+                "Falling back to the pattern itself (%.1f pixels). " +
+                "This may indicate that the component was not properly resolved before using the %s API.",
+                pattern, width, Calinea.LIBRARY_NAME));
         }
 
         return width;
