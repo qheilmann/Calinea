@@ -1,6 +1,8 @@
-package io.calinea.measurer;
+package io.calinea.measurer.components;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import io.calinea.measurer.ComponentMeasurerConfig;
+import io.calinea.measurer.IComponentMeasurer;
 import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

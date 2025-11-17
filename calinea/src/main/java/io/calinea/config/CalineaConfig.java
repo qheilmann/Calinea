@@ -10,7 +10,8 @@ public class CalineaConfig {
     private CalineaLogger logger = CalineaLogger.silent();
     private boolean warnOnMissingWidths = true;
     private boolean warnOnMissingFonts = true;
-    private boolean warnOnUnresolvedSelectorComponents = true;
+    private boolean warnOnUnresolvedServerComponents = true;
+    private boolean warnOnUnforcedClientComponents = true;
     private boolean verboseLogging = false;
 
     public Path fontInfoPath() {
@@ -68,17 +69,32 @@ public class CalineaConfig {
      * SelectorComponents must be resolved server-side before being passed to Calinea for accurate measurement.
      * When unresolved, Calinea falls back to measuring the raw selector pattern as text.
      */
-    public CalineaConfig warnOnUnresolvedSelectorComponents(boolean warnOnUnresolvedSelectorComponents) {
-        this.warnOnUnresolvedSelectorComponents = warnOnUnresolvedSelectorComponents;
+    public CalineaConfig warnOnUnresolvedServerComponents(boolean warnOnUnresolvedServerComponents) {
+        this.warnOnUnresolvedServerComponents = warnOnUnresolvedServerComponents;
         return this;
     }
 
     /**
      * Gets whether to warn when measuring unresolved SelectorComponents.
      */
-    public boolean warnOnUnresolvedSelectorComponents() {
-        return warnOnUnresolvedSelectorComponents;
+    public boolean warnOnUnresolvedServerComponents() {
+        return warnOnUnresolvedServerComponents;
     }
+
+    /**
+     * Sets whether to warn when measuring unresolved client-side components.
+     * Client-side components must be resolved client-side before being passed to Calinea for accurate measurement.
+     * When unresolved, Calinea falls back to measuring the raw component as text.
+     */    
+    public CalineaConfig warnOnUnforcedClientComponents(boolean warnOnUnforcedClientComponents) {
+        this.warnOnUnforcedClientComponents = warnOnUnforcedClientComponents;
+        return this;
+    }
+
+    public boolean warnOnUnforcedClientComponents() {
+        return warnOnUnforcedClientComponents;
+    }
+
 
     public boolean verboseLogging() {
         return verboseLogging;

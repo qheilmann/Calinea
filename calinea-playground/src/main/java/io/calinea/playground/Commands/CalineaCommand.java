@@ -55,15 +55,15 @@ public final class CalineaCommand {
             .withSubcommand(new CommandAPICommand("measure")
                 .withArguments(new ChatComponentArgument("component"))
                 .withOptionalArguments(new BooleanArgument("mustBeResolved"))
-                .executes((sender, args) -> {
+                .executesPlayer((player, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
                     boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", false);
 
                     if (mustBeResolved) {
                         try {
-                            component = PaperComponents.resolveWithContext(component, sender, null);
+                            component = PaperComponents.resolveWithContext(component, player, player);
                         } catch (Exception e) {
-                            sender.sendMessage(Component.text("Failed to resolve component for measurement: " + e.getMessage(), NamedTextColor.RED));
+                            player.sendMessage(Component.text("Failed to resolve component for measurement: " + e.getMessage(), NamedTextColor.RED));
                             return;
                         }
                     }
@@ -79,7 +79,7 @@ public final class CalineaCommand {
                         .append(Component.text(" pixels", NamedTextColor.GRAY))
                         .build();
 
-                    sender.sendMessage(result);
+                    player.sendMessage(result);
                 })
             )
 
