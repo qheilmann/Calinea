@@ -6,10 +6,12 @@ import org.jspecify.annotations.Nullable;
 
 import io.calinea.measurer.components.ObjectComponentMeasurer;
 import io.calinea.measurer.components.EntityNBTComponentMeasurer;
+import io.calinea.measurer.components.KeybindComponentMeasurer;
 import io.calinea.measurer.components.ScoreComponentMeasurer;
 import io.calinea.measurer.components.SelectorComponentMeasurer;
 import io.calinea.measurer.components.StorageNBTComponentMeasurer;
 import io.calinea.measurer.components.TextComponentMeasurer;
+import io.calinea.measurer.components.TranslatableComponentMeasurer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.Style;
@@ -29,16 +31,9 @@ public class ComponentMeasurer {
             new ScoreComponentMeasurer(),
             new ObjectComponentMeasurer(config),
             new EntityNBTComponentMeasurer(),
-            new StorageNBTComponentMeasurer()
-            // TODO
-            // Add other measurer implementations here as you create them
-            // new TranslatableComponentMeasurer(config),
-            // new KeybindComponentMeasurer(config),
-            // etc.
-            // All serverSide component must be resolved before here, and if not resolve use the client fallback renderer and warn
-            // All clientSide component can be resolved before here, and if not calinea resolved use the right fallback and maybe warn
-
-            // TODO maybe auto asisng direcly on class, with a consummer or something to have the config object ?
+            new StorageNBTComponentMeasurer(),
+            new KeybindComponentMeasurer(config),
+            new TranslatableComponentMeasurer(config)
         );
     }
 
