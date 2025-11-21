@@ -7,7 +7,6 @@ import dev.jorel.commandapi.arguments.ChatComponentArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import io.calinea.Calinea;
-import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -59,16 +58,13 @@ public final class CalineaCommand {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
                     boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", false);
 
+                    // Resolve
                     if (mustBeResolved) {
-                        try {
-                            component = PaperComponents.resolveWithContext(component, player, player);
-                        } catch (Exception e) {
-                            player.sendMessage(Component.text("Failed to resolve component for measurement: " + e.getMessage(), NamedTextColor.RED));
-                            return;
-                        }
+                        component = Calinea.resolve(component, player, player);
                     }
 
-                    double width = Calinea.measureWidth(component);
+                    // Measure
+                    double width = Calinea.measure(component);
 
                     //Format and send message
                     Component result = Component.text()

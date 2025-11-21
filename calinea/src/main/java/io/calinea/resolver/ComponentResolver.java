@@ -1,22 +1,27 @@
 package io.calinea.resolver;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+
+import io.calinea.resolver.Client.ForcedClientComponentResolver;
+import io.calinea.resolver.Server.ServerComponentResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
+public class ComponentResolver {
+    
+    public Component resolve(ComponentLike componentLike, CommandSender context, Entity scoreboardSubject) {
+        
+        Component component = componentLike.asComponent();
+        
+        // Resolve server-side components
+        ServerComponentResolver serverResolver = new ServerComponentResolver();
+        component = serverResolver.resolve(component, context, scoreboardSubject);
+        
+        // Force resolution of client-side components
+        ForcedClientComponentResolver forcedClientResolver = new ForcedClientComponentResolver();
+        component = forcedClientResolver.resolve(component);
 
-/**
- * Resolves Adventure components of type T into another Components using context C.
- *
- * @param <T> The type of ComponentLike to resolve
- * @param <C> The type of context used during resolution
- */
-public interface ComponentResolver<T extends ComponentLike, C> {
-    /**
-     * Resolves the given component into another Component using the provided context.
-     *
-     * @param component The component to resolve
-     * @param context   The context to use during resolution
-     * @return The resolved Component
-     */
-    Component resolve(T component, C context);
+        return component;
+    }
 }

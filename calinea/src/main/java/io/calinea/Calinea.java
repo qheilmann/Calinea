@@ -2,6 +2,8 @@ package io.calinea;
 
 import java.nio.file.Path;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
 import io.calinea.config.CalineaConfig;
@@ -10,6 +12,7 @@ import io.calinea.measurer.ComponentMeasurer;
 import io.calinea.measurer.ComponentMeasurerConfig;
 import io.calinea.models.PackInfo;
 import io.calinea.reader.JsonFontReader;
+import io.calinea.resolver.ComponentResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -50,10 +53,6 @@ public class Calinea {
         return getConfig().logger();
     }
 
-    public static @Nullable PackInfo TMPgetPackInfo() {
-        return packInfo;
-    }
-
     public static void reloadFonts() {
 
         Path fontInfoPath = getConfig().fontInfoPath();
@@ -65,6 +64,22 @@ public class Calinea {
             throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
         }
     }
+
+    public static Component resolve(Component component, CommandSender context, Entity scoreboardSubject) {
+        ComponentResolver resolver = new ComponentResolver();
+        return resolver.resolve(component, context, scoreboardSubject);
+    }
+    
+    public static double measure(Component component) {
+        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
+        return measurer.measure(component);
+    }
+    
+    public static double resolveAndMeasure(Component component, CommandSender context, Entity scoreboardSubject) {
+        component = resolve(component, context, scoreboardSubject);
+        return measureWidth(component);
+    }
+
 
     /**
      * Centers text within the default Minecraft chat width (320 pixels).

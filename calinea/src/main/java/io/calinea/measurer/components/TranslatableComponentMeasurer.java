@@ -1,10 +1,12 @@
 package io.calinea.measurer.components;
 
 import java.util.List;
+
 import io.calinea.Calinea;
 import io.calinea.measurer.ComponentMeasurer;
 import io.calinea.measurer.ComponentMeasurerConfig;
 import io.calinea.measurer.IComponentMeasurer;
+import io.calinea.utils.TranslatableComponentUtils;
 import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -48,9 +50,9 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
         String identifier = component.key();
         Key fontKey = component.font();
         Style parentStyle = component.style();
-        
-        String translation = extractEnglishTranslation(component);
-        int placeholderCount = countPlaceholders(translation);
+
+        String translation = TranslatableComponentUtils.extractEnglishTranslation(component);
+        int placeholderCount = TranslatableComponentUtils.countPlaceholders(translation);
         
         double clearedWidth = measureCleanTranslation(translation, fontKey, parentStyle);
         double totalArgsWidth = measureArguments(component, placeholderCount, parentStyle);
@@ -62,31 +64,32 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
         return width;
     }
     
-    private String extractEnglishTranslation(TranslatableComponent component) {
-        // Place dummy arguments for argument counting afterwards
-        TranslatableComponent clearedComponent = component.arguments(DUMMY_ARGUMENTS);
-        StringBuilder translatedText = new StringBuilder();
-        PaperComponents.flattener()
-            .flatten(clearedComponent, new FlattenerListener() {
-                @Override
-                public void component(String text) {
-                    translatedText.append(text);
-                }
-            });
+    // private String extractEnglishTranslation(TranslatableComponent component) {
+    //     TranslatableComponent clearedComponent = component.children(List.of()) // Clear children, calculated separately
+    //                                                       .arguments(DUMMY_ARGUMENTS); // Place dummy arguments for argument counting afterwards
+    //     StringBuilder translatedText = new StringBuilder();
+    //     PaperComponents.flattener()
+    //         .flatten(clearedComponent, new FlattenerListener() {
+    //             @Override
+    //             public void component(String text) {
+    //                 translatedText.append(text);
+    //             }
+    //         });
         
-        return translatedText.toString();
-    }
+    //     return translatedText.toString();
+    // }
     
-    private int countPlaceholders(String translation) {
-        // Count how many arguments are in the translation
-        int placeholderCount = 0;
-        int idx = 0;
-        while ((idx = translation.indexOf(PLACEHOLDER, idx)) != -1) {
-            placeholderCount++;
-            idx += PLACEHOLDER.length();
-        }
-        return placeholderCount;
-    }
+    // private int countPlaceholders(String translation) {
+    //     // Count how many arguments are in the translation
+    //     int placeholderCount = 0;
+    //     int idx = 0;
+    //     while ((idx = translation.indexOf(PLACEHOLDER, idx)) != -1) {
+    //         placeholderCount++;
+    //         idx += PLACEHOLDER.length();
+    //     }
+
+    //     return placeholderCount;
+    // }
     
     private double measureCleanTranslation(String translation, Key fontKey, Style parentStyle) {
         String cleanTranslation = translation.replace(PLACEHOLDER, ""); // remove placeholders for clean measurement
