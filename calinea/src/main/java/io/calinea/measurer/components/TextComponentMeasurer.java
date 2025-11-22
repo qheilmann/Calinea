@@ -24,6 +24,9 @@ public class TextComponentMeasurer implements IComponentMeasurer<TextComponent> 
 
     @Override
     public double measureRoot(TextComponent component) {
+        if (component == Component.empty() || component.content().isEmpty()) return 0;
+        if (component == Component.newline() || component.content() == "\n") return 0;
+
         String text = component.content();
         Key fontKey = component.font();
         boolean isBold = component.style().hasDecoration(TextDecoration.BOLD);
@@ -55,6 +58,10 @@ public class TextComponentMeasurer implements IComponentMeasurer<TextComponent> 
         for (int codepointOffset = 0; codepointOffset < codepointLength; codepointOffset++) {
             int index = text.offsetByCodePoints(0, codepointOffset);
             int codepoint = text.codePointAt(index);
+
+            if (codepoint == '\n') {
+                continue; // Newline has no width
+            }
 
             totalWidth += measureCodepointWidth(codepoint, fontKey, isBold);
         }
