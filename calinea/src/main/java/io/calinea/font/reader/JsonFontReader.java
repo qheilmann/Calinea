@@ -1,16 +1,18 @@
-package io.calinea.reader;
+package io.calinea.font.reader;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.calinea.font.FontInfo;
+import io.calinea.font.PackInfo;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.jspecify.annotations.Nullable;
 
-import io.calinea.models.FontInfo;
-import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
 
 public class JsonFontReader {

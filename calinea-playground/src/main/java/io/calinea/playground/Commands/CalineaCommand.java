@@ -1,10 +1,13 @@
 package io.calinea.playground.Commands;
 
+import java.util.List;
+
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.ChatComponentArgument;
 import dev.jorel.commandapi.arguments.DoubleArgument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import io.calinea.Calinea;
 import net.kyori.adventure.text.Component;
@@ -76,6 +79,30 @@ public final class CalineaCommand {
                         .build();
 
                     player.sendMessage(result);
+                })
+            )
+
+            .withSubcommand(new CommandAPICommand("split")
+                .withArguments(new ChatComponentArgument("component"))
+                .withOptionalArguments(new IntegerArgument("maxWidth"))
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
+                    Component component = (Component) args.get("component");
+                    int maxWidth = (int) args.getOrDefault("maxWidth", 320);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", false);
+
+                    // Resolve
+                    if (mustBeResolved) {
+                        component = Calinea.resolve(component, player, player);
+                    }
+
+                    // Split
+                    List<Component> splits = Calinea.split(component, maxWidth).components();
+
+                    // Send each split part
+                    for (var part : splits) {
+                        player.sendMessage(part.hoverEvent(Component.text(part.toString())));
+                    }
                 })
             )
 

@@ -1,6 +1,6 @@
-package io.calinea.measurer;
+package io.calinea.segmentation.measurer;
 
-import io.calinea.models.PackInfo;
+import io.calinea.font.PackInfo;
 
 public class ComponentMeasurerConfig {
     private final PackInfo packInfo;

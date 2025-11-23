@@ -1,18 +1,21 @@
 package io.calinea;
 
 import java.nio.file.Path;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
 import io.calinea.config.CalineaConfig;
+import io.calinea.font.PackInfo;
+import io.calinea.font.reader.JsonFontReader;
 import io.calinea.logger.CalineaLogger;
-import io.calinea.measurer.ComponentMeasurer;
-import io.calinea.measurer.ComponentMeasurerConfig;
-import io.calinea.models.PackInfo;
-import io.calinea.reader.JsonFontReader;
 import io.calinea.resolver.ComponentResolver;
+import io.calinea.segmentation.SegmentationResult;
+import io.calinea.segmentation.measurer.ComponentMeasurer;
+import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
+import io.calinea.segmentation.splitter.Splitter;
+import io.calinea.segmentation.splitter.SplitterConfig;
+import io.calinea.segmentation.splitter.TextTokenizer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -78,6 +81,13 @@ public class Calinea {
     public static double resolveAndMeasure(Component component, CommandSender context, Entity scoreboardSubject) {
         component = resolve(component, context, scoreboardSubject);
         return measureWidth(component);
+    }
+
+    public static SegmentationResult split(Component component, int maxWidth) {
+        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
+        SplitterConfig splitterConfig = new SplitterConfig(maxWidth, new TextTokenizer.Default());
+        Splitter splitter = new Splitter(splitterConfig, measurer);
+        return splitter.split(component);
     }
 
 

@@ -1,9 +1,9 @@
 package io.calinea.generator;
 
+import io.calinea.font.FontInfo;
+import io.calinea.font.PackInfo;
+import io.calinea.font.reader.JsonFontReader;
 import io.calinea.generator.writer.JsonFontWriter;
-import io.calinea.models.FontInfo;
-import io.calinea.models.PackInfo;
-import io.calinea.reader.JsonFontReader;
 import net.kyori.adventure.key.Key;
 
 import org.junit.jupiter.api.Nested;

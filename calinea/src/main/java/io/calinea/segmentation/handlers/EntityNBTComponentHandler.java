@@ -1,13 +1,19 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.IComponentMeasurer;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.EntityNBTComponent;
 
-public class EntityNBTComponentMeasurer implements IComponentMeasurer<EntityNBTComponent>{
+/**
+ * Handler for EntityNBTComponent.
+ * <p>
+ * EntityNBTComponents are supposed to be resolved server-side. If not, they will not be resolved 
+ * client-side either and will show an empty TextComponent instead.
+ */
+public class EntityNBTComponentHandler implements IComponentLayoutHandler<EntityNBTComponent>{
 
-    public EntityNBTComponentMeasurer() {}
+    public EntityNBTComponentHandler() {}
 
     @Override
     public boolean canHandle(Component component) {
@@ -16,8 +22,6 @@ public class EntityNBTComponentMeasurer implements IComponentMeasurer<EntityNBTC
 
     @Override
     public double measureRoot(EntityNBTComponent component) {
-
-        // EntityNBTComponent are supposed to be resolved server-side, if not it will not be resolved client-side either and will show an empty TextComponent instead
 
         // Warn that an unresolved EntityNBTComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
@@ -30,5 +34,15 @@ public class EntityNBTComponentMeasurer implements IComponentMeasurer<EntityNBTC
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return true;
+    }
+
+    @Override
+    public TextComponent asTextComponent(EntityNBTComponent component) {
+        return Component.empty().style(component.style());
     }
 }

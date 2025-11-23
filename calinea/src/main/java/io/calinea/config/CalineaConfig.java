@@ -2,8 +2,8 @@ package io.calinea.config;
 
 import java.nio.file.Path;
 
+import io.calinea.font.PackInfo;
 import io.calinea.logger.CalineaLogger;
-import io.calinea.models.PackInfo;
 
 public class CalineaConfig {
     private Path fontInfoPath = Path.of("./font-widths.json");

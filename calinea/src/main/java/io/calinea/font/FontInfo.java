@@ -1,4 +1,4 @@
-package io.calinea.models;
+package io.calinea.font;
 
 import java.util.ArrayList;
 import java.util.List;

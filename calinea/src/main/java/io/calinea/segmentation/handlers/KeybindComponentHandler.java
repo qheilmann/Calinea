@@ -1,17 +1,24 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.ComponentMeasurerConfig;
-import io.calinea.measurer.IComponentMeasurer;
+import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.KeybindComponent;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class KeybindComponentMeasurer implements IComponentMeasurer<KeybindComponent>{
+/**
+ * Handler for KeybindComponent.
+ * <p>
+ * KeybindComponents should be resolved server-side. If not resolved, the client will render 
+ * the correct keybind but the measurement can vary depending on the user's keybind settings.
+ * We measure the default keybind pattern instead and warn the consumer.
+ */
+public class KeybindComponentHandler implements IComponentLayoutHandler<KeybindComponent>{
     ComponentMeasurerConfig config;
 
-    public KeybindComponentMeasurer(ComponentMeasurerConfig config) {
+    public KeybindComponentHandler(ComponentMeasurerConfig config) {
         this.config = config;
     }
 
@@ -22,16 +29,12 @@ public class KeybindComponentMeasurer implements IComponentMeasurer<KeybindCompo
 
     @Override
     public double measureRoot(KeybindComponent component) {
+        TextComponent textComponent = asTextComponent(component);
+        String identifier = textComponent.content();
+        Key fontKey = textComponent.font();
+        boolean isBold = textComponent.style().hasDecoration(TextDecoration.BOLD);
 
-        // KeybindComponents should be resolved server-side. If not resolved,
-        // the client will render the correct keybind but the measurement can vary depending on the user's keybind settings.
-        // so we measure the default keybind pattern instead and warn the consumer.
-        // IMPROVEMENT: If it possible to have the default keybind settings, we could use that instead for more accurate measurements.
-        String identifier = component.keybind();
-        Key fontKey = component.font();
-        boolean isBold = component.style().hasDecoration(TextDecoration.BOLD);
-
-        TextComponentMeasurer textMeasurer = new TextComponentMeasurer(config);
+        TextComponentHandler textMeasurer = new TextComponentHandler(config);
         Double width = textMeasurer.measureTextWidth(identifier, fontKey, isBold);
 
         
@@ -47,5 +50,15 @@ public class KeybindComponentMeasurer implements IComponentMeasurer<KeybindCompo
         }
 
         return width;
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return false;
+    }
+
+    @Override
+    public TextComponent asTextComponent(KeybindComponent component) {
+        return Component.text(component.keybind(), component.style());
     }
 }

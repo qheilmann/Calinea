@@ -1,13 +1,19 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.IComponentMeasurer;
-import net.kyori.adventure.text.BlockNBTComponent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.BlockNBTComponent;
+import net.kyori.adventure.text.TextComponent;
 
-public class BlockNBTComponentMeasurer implements IComponentMeasurer<BlockNBTComponent>{
+/**
+ * Handler for BlockNBTComponent.
+ * <p>
+ * BlockNBTComponents are supposed to be resolved server-side. If not, they will not be resolved 
+ * client-side either and will show an empty TextComponent instead.
+ */
+public class BlockNBTComponentHandler implements IComponentLayoutHandler<BlockNBTComponent>{
 
-    public BlockNBTComponentMeasurer() {}
+    public BlockNBTComponentHandler() {}
 
     @Override
     public boolean canHandle(Component component) {
@@ -16,8 +22,6 @@ public class BlockNBTComponentMeasurer implements IComponentMeasurer<BlockNBTCom
 
     @Override
     public double measureRoot(BlockNBTComponent component) {
-
-        // BlockNBTComponent are supposed to be resolved server-side, if not it will not be resolved client-side either and will show an empty TextComponent instead
 
         // Warn that an unresolved BlockNBTComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
@@ -30,5 +34,15 @@ public class BlockNBTComponentMeasurer implements IComponentMeasurer<BlockNBTCom
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return true;
+    }
+
+    @Override
+    public TextComponent asTextComponent(BlockNBTComponent component) {
+        return Component.empty().style(component.style());
     }
 }

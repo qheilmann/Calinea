@@ -1,4 +1,4 @@
-package io.calinea.reader;
+package io.calinea.font.reader;
 
 import java.util.List;
 import java.util.SequencedCollection;

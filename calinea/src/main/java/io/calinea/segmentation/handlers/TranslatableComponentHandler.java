@@ -1,22 +1,30 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import java.util.List;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.ComponentMeasurer;
-import io.calinea.measurer.ComponentMeasurerConfig;
-import io.calinea.measurer.IComponentMeasurer;
+import io.calinea.segmentation.measurer.ComponentMeasurer;
+import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import io.calinea.utils.TranslatableComponentUtils;
-import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.TranslationArgument;
-import net.kyori.adventure.text.flattener.FlattenerListener;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class TranslatableComponentMeasurer implements IComponentMeasurer<TranslatableComponent>{
+/**
+ * Handler for TranslatableComponent.
+ * <p>
+ * TranslatableComponents should be resolved server-side. If not resolved, the client will render 
+ * the correct translation but the measurement can vary depending on the user's locale settings.
+ * To approximate the width, we default to English translation or the fallback, and warn the consumer.
+ * <p>
+ * For splitting, we flatten the component into a TextComponent structure (English fallback),
+ * preserving arguments as children.
+ */
+public class TranslatableComponentHandler implements IComponentLayoutHandler<TranslatableComponent>{
     ComponentMeasurerConfig config;
 
     public final static String PLACEHOLDER = "%s";
@@ -32,7 +40,7 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
         TranslationArgument.component(DUMMY_PLACEHOLDER_COMPONENT)
     );
 
-    public TranslatableComponentMeasurer(ComponentMeasurerConfig config) {
+    public TranslatableComponentHandler(ComponentMeasurerConfig config) {
         this.config = config;
     }
 
@@ -43,10 +51,6 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
 
     @Override
     public double measureRoot(TranslatableComponent component) {
-        // TranslatableComponents should be resolved server-side. If not resolved,
-        // the client will render the correct translation but the measurement can vary depending on the user's locale settings.
-        // To approximate the width, we default english translation or the fallback, and warn the consumer.
-
         String identifier = component.key();
         Key fontKey = component.font();
         Style parentStyle = component.style();
@@ -63,30 +67,16 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
 
         return width;
     }
-    
-    // private String extractEnglishTranslation(TranslatableComponent component) {
-    //     TranslatableComponent clearedComponent = component.children(List.of()) // Clear children, calculated separately
-    //                                                       .arguments(DUMMY_ARGUMENTS); // Place dummy arguments for argument counting afterwards
-    //     StringBuilder translatedText = new StringBuilder();
-    //     PaperComponents.flattener()
-    //         .flatten(clearedComponent, new FlattenerListener() {
-    //             @Override
-    //             public void component(String text) {
-    //                 translatedText.append(text);
-    //             }
-    //         });
-        
-    //     return translatedText.toString();
-    // }
-    
-    // private int countPlaceholders(String translation) {
-    //     // Count how many arguments are in the translation
-    //     int placeholderCount = 0;
-    //     int idx = 0;
-    //     while ((idx = translation.indexOf(PLACEHOLDER, idx)) != -1) {
-    //         placeholderCount++;
-    //         idx += PLACEHOLDER.length();
-    //     }
+
+    @Override
+    public boolean isAtomic() {
+        return false;
+    }
+
+    @Override
+    public TextComponent asTextComponent(TranslatableComponent component) {
+        return TranslatableComponentUtils.flattenInEnglish(component);
+    }
 
     //     return placeholderCount;
     // }
@@ -94,7 +84,7 @@ public class TranslatableComponentMeasurer implements IComponentMeasurer<Transla
     private double measureCleanTranslation(String translation, Key fontKey, Style parentStyle) {
         String cleanTranslation = translation.replace(PLACEHOLDER, ""); // remove placeholders for clean measurement
         
-        TextComponentMeasurer textMeasurer = new TextComponentMeasurer(config);
+        TextComponentHandler textMeasurer = new TextComponentHandler(config);
         return textMeasurer.measureTextWidth(cleanTranslation, fontKey, parentStyle.hasDecoration(TextDecoration.BOLD));
     }
     

@@ -1,4 +1,4 @@
-package io.calinea.models;
+package io.calinea.font;
 
 import java.util.Collections;
 import java.util.HashSet;

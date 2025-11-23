@@ -2,10 +2,12 @@ package io.calinea.generator.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.calinea.font.FontInfo;
+import io.calinea.font.PackInfo;
+
 import org.jspecify.annotations.Nullable;
 
-import io.calinea.models.FontInfo;
-import io.calinea.models.PackInfo;
 import net.kyori.adventure.key.Key;
 
 import javax.imageio.ImageIO;

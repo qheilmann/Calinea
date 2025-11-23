@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import io.calinea.models.FontInfo;
-import io.calinea.models.PackInfo;
-import io.calinea.reader.JsonFontFormat;
+import io.calinea.font.FontInfo;
+import io.calinea.font.PackInfo;
+import io.calinea.font.reader.JsonFontFormat;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;

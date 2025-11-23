@@ -1,10 +1,6 @@
 package io.calinea.utils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -26,14 +22,6 @@ public class TranslatableComponentUtils {
         TranslationArgument.component(DUMMY_PLACEHOLDER_COMPONENT),
         TranslationArgument.component(DUMMY_PLACEHOLDER_COMPONENT)
     );
-
-    // Goal convert the TranslatableComponent to a TextComponent append with its arguments in between
-    // flattenInEnglish
-
-
-    // if arg == %s tout ok
-    // if arg < %s que mettre de %s
-    // if arg > %s tout ok et skip les suivants
 
     /**
      * Flattens the TranslatableComponent into a TextComponent which contains the English translation and the arguments as children.

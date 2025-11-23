@@ -1,4 +1,4 @@
 @NullMarked
-package io.calinea.measurer;
+package io.calinea.segmentation.handlers;
 
 import org.jspecify.annotations.NullMarked;

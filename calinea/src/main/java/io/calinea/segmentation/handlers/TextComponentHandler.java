@@ -1,19 +1,18 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.calinea.measurer.ComponentMeasurerConfig;
-import io.calinea.measurer.IComponentMeasurer;
-import io.calinea.models.PackInfo;
+import io.calinea.font.PackInfo;
+import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class TextComponentMeasurer implements IComponentMeasurer<TextComponent> {
+public class TextComponentHandler implements IComponentLayoutHandler<TextComponent> {
     private final ComponentMeasurerConfig config;
 
-    public TextComponentMeasurer(ComponentMeasurerConfig config) {
+    public TextComponentHandler(ComponentMeasurerConfig config) {
         this.config = config;
     }
 
@@ -32,6 +31,16 @@ public class TextComponentMeasurer implements IComponentMeasurer<TextComponent> 
         boolean isBold = component.style().hasDecoration(TextDecoration.BOLD);
 
         return measureTextWidth(text, fontKey, isBold);
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return false;
+    }
+
+    @Override
+    public TextComponent asTextComponent(TextComponent component) {
+        return component;
     }
 
 

@@ -1,13 +1,19 @@
-package io.calinea.measurer.components;
+package io.calinea.segmentation.handlers;
 
 import io.calinea.Calinea;
-import io.calinea.measurer.IComponentMeasurer;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.StorageNBTComponent;
 
-public class StorageNBTComponentMeasurer implements IComponentMeasurer<StorageNBTComponent>{
+/**
+ * Handler for StorageNBTComponent.
+ * <p>
+ * StorageNBTComponents are supposed to be resolved server-side. If not, they will not be resolved 
+ * client-side either and will show an empty TextComponent instead.
+ */
+public class StorageNBTComponentHandler implements IComponentLayoutHandler<StorageNBTComponent>{
 
-    public StorageNBTComponentMeasurer() {}
+    public StorageNBTComponentHandler() {}
 
     @Override
     public boolean canHandle(Component component) {
@@ -16,8 +22,6 @@ public class StorageNBTComponentMeasurer implements IComponentMeasurer<StorageNB
 
     @Override
     public double measureRoot(StorageNBTComponent component) {
-
-        // StorageNBTComponent are supposed to be resolved server-side, if not it will not be resolved client-side either and will show an empty TextComponent instead
 
         // Warn that an unresolved StorageNBTComponent is being measured
         if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
@@ -30,5 +34,15 @@ public class StorageNBTComponentMeasurer implements IComponentMeasurer<StorageNB
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean isAtomic() {
+        return true;
+    }
+
+    @Override
+    public TextComponent asTextComponent(StorageNBTComponent component) {
+        return Component.empty().style(component.style());
     }
 }

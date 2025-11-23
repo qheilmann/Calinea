@@ -2,9 +2,9 @@ package io.calinea.generator;
 
 import org.jspecify.annotations.Nullable;
 
+import io.calinea.font.PackInfo;
 import io.calinea.generator.parser.MinecraftFontParser;
 import io.calinea.generator.writer.JsonFontWriter;
-import io.calinea.models.PackInfo;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

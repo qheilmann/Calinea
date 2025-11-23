@@ -1,4 +1,4 @@
 @NullMarked
-package io.calinea.models.Width;
+package io.calinea.segmentation;
 
 import org.jspecify.annotations.NullMarked;
