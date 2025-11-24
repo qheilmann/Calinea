@@ -39,8 +39,8 @@ public class KeybindComponentHandler implements IComponentLayoutHandler<KeybindC
 
         
         // Warn that an unresolved KeybindComponent is being measured
-        if (Calinea.getConfig().warnOnUnforcedClientComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnforcedClientComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unforced KeybindComponent '%s' detected. " + 
                 "Keybind components should be forced server-side before measurement. " +
                 "Falling back to the keybind identifier (%.1f pixels), " + 

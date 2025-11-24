@@ -70,12 +70,12 @@ public class PackInfo {
 
         // Handle error cases
         if (!result.isValid()) {
-            if (result.getStatus() == WidthResult.Status.MISSING_WIDTH && Calinea.getConfig().warnOnMissingWidths()){
-                Calinea.getLogger().warning("Character '" + Character.toString(codepoint) + "' not found in font '" + fontKey.asString() + "' or its references. Using default width '" + defaultWidth + "'.");
+            if (result.getStatus() == WidthResult.Status.MISSING_WIDTH && Calinea.config().warnOnMissingWidths()){
+                Calinea.logger().warning("Character '" + Character.toString(codepoint) + "' not found in font '" + fontKey.asString() + "' or its references. Using default width '" + defaultWidth + "'.");
             }
 
-            if (result.getStatus() == WidthResult.Status.MISSING_FONT && Calinea.getConfig().warnOnMissingFonts()){
-                Calinea.getLogger().warning("Font with key '" + fontKey.asString() + "' not found. Using default width '" + defaultWidth + "'.");
+            if (result.getStatus() == WidthResult.Status.MISSING_FONT && Calinea.config().warnOnMissingFonts()){
+                Calinea.logger().warning("Font with key '" + fontKey.asString() + "' not found. Using default width '" + defaultWidth + "'.");
             }
 
             return defaultWidth;
@@ -97,8 +97,8 @@ public class PackInfo {
         
         // Check for circular references
         if (visited.contains(fontKey)) {
-            if(Calinea.getConfig().verboseLogging()){
-                Calinea.getLogger().info("Circular reference detected for font '" + fontKey.asString() + "', stopping recursion.");
+            if(Calinea.config().verboseLogging()){
+                Calinea.logger().info("Circular reference detected for font '" + fontKey.asString() + "', stopping recursion.");
             }
             return WidthResult.circularReference();
         }
@@ -116,8 +116,8 @@ public class PackInfo {
             for (Key referenceKey : fontInfo.getReferences()) {
                 // Skip if this would create a circular reference
                 if (visited.contains(referenceKey)) {
-                    if(Calinea.getConfig().verboseLogging()){
-                        Calinea.getLogger().info("Skipping circular reference from '" + fontKey.asString() + "' to '" + referenceKey.asString() + "'.");
+                    if(Calinea.config().verboseLogging()){
+                        Calinea.logger().info("Skipping circular reference from '" + fontKey.asString() + "' to '" + referenceKey.asString() + "'.");
                     }
                     continue; // Skip this reference, try the next one
                 }

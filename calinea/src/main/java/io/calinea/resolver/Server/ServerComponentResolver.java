@@ -15,7 +15,7 @@ public class ServerComponentResolver {
         try {
             return PaperComponents.resolveWithContext(component, context, scoreboardSubject, true);
         } catch (IOException e) {
-            Calinea.getLogger().severe("Failed to resolve the server-side Component: " + component, e);
+            Calinea.logger().severe("Failed to resolve the server-side Component: " + component, e);
         }
         return component;
     }

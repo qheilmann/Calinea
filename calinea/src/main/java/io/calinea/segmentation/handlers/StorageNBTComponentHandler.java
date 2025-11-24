@@ -24,8 +24,8 @@ public class StorageNBTComponentHandler implements IComponentLayoutHandler<Stora
     public double measureRoot(StorageNBTComponent component) {
 
         // Warn that an unresolved StorageNBTComponent is being measured
-        if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnresolvedServerComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unresolved StorageNBTComponent detected - '%s'. " +
                 "It should be resolved server-side before measurement. " +
                 "Falling back to an empty component. " +

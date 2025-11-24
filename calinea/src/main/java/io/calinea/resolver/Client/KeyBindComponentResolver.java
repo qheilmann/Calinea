@@ -13,8 +13,8 @@ public class KeyBindComponentResolver implements IClientComponentResolver<Keybin
     @Override
     public Component resolve(KeybindComponent component) {
 
-        if (Calinea.getConfig().warnOnUnforcedClientComponents()) {
-            Calinea.getLogger().info("KeybindComponent resolution is not fully supported yet, and can't be customized, it will be replaced with the keybind identifier: " + component.keybind());
+        if (Calinea.config().warnOnUnforcedClientComponents()) {
+            Calinea.logger().info("KeybindComponent resolution is not fully supported yet, and can't be customized, it will be replaced with the keybind identifier: " + component.keybind());
         }
 
         return Component.text(component.keybind(), component.style()).append(component.children());

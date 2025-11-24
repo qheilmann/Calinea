@@ -2,6 +2,8 @@ package io.calinea.playground.Commands;
 
 import java.util.List;
 
+import org.bukkit.entity.Entity;
+
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.BooleanArgument;
@@ -10,6 +12,8 @@ import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import io.calinea.Calinea;
+import io.calinea.layout.Alignment;
+import io.calinea.layout.LayoutBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -21,14 +25,17 @@ public final class CalineaCommand {
     public static final String SHORT_HELP = "Calinea library testing commands.";
     public static final String LONG_HELP = "Commands for testing various Calinea library features like centering, measuring, alignment, and separators";
     public static final String USAGE = """
-                                    /calinea center [component] [width]
-                                    /calinea measure [component]
-                                    /calinea left [component] [width]
-                                    /calinea right [component] [width]
-                                    /calinea align (left|right|center) [component] [width]
-                                    /calinea separator [width]
+                                    /calinea center [component] [width] [mustBeResolved]
+                                    /calinea measure [component] [mustBeResolved]
+                                    /calinea left [component] [width] [mustBeResolved]
+                                    /calinea right [component] [width] [mustBeResolved]
+                                    /calinea align (left|right|center) [component] [width] [mustBeResolved]
+                                    /calinea separator [width] [mustBeResolved]
                                     /calinea reload
                                     """;
+
+    private static final boolean DEFAULT_MUST_BE_RESOLVED = false;
+    private static final double DEFAULT_WIDTH = 320.0; // default chat width
 
     private CalineaCommand() {
     }
@@ -40,16 +47,68 @@ public final class CalineaCommand {
             .withPermission(PERMISSION)
             .withHelp(SHORT_HELP, LONG_HELP)
             .withUsage(USAGE)
-            
+
             // center
             .withSubcommand(new CommandAPICommand("center")
                 .withOptionalArguments(new ChatComponentArgument("component"))
                 .withOptionalArguments(new DoubleArgument("width"))
-                .executes((sender, args) -> {
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
-                    double width = (double) args.getOrDefault("width", 320.0);
-                    Component centered = Calinea.center(component, width);
-                    sender.sendMessage(centered);
+                    double width = (double) args.getOrDefault("width", DEFAULT_WIDTH);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
+
+                    alignAndSend(player, component, Alignment.CENTER, width, mustBeResolved);
+                })
+            )
+
+            // left
+            .withSubcommand(new CommandAPICommand("left")
+                .withOptionalArguments(new ChatComponentArgument("component"))
+                .withOptionalArguments(new DoubleArgument("width"))
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
+                    Component component = (Component) args.getOrDefault("component", Component.text("Left"));
+                    double width = (double) args.getOrDefault("width", DEFAULT_WIDTH);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
+
+                    alignAndSend(player, component, Alignment.LEFT, width, mustBeResolved);
+                })
+            )
+
+            // right
+            .withSubcommand(new CommandAPICommand("right")
+                .withOptionalArguments(new ChatComponentArgument("component"))
+                .withOptionalArguments(new DoubleArgument("width"))
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
+                    Component component = (Component) args.getOrDefault("component", Component.text("Right"));
+                    double width = (double) args.getOrDefault("width", DEFAULT_WIDTH);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
+
+                    alignAndSend(player, component, Alignment.RIGHT, width, mustBeResolved);
+                })
+            )
+
+            // align
+            .withSubcommand(new CommandAPICommand("align")
+                .withArguments(new MultiLiteralArgument("alignment", "left", "right", "center"))
+                .withOptionalArguments(new ChatComponentArgument("component"))
+                .withOptionalArguments(new DoubleArgument("width"))
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
+                    String alignment = (String) args.getOrDefault("alignment", "left");
+                    Component component = (Component) args.getOrDefault("component", Component.text("Text"));
+                    double width = (double) args.getOrDefault("width", DEFAULT_WIDTH);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
+
+                    Alignment align = switch (alignment) {
+                        case "left" -> Alignment.LEFT;
+                        case "right" -> Alignment.RIGHT;
+                        case "center" -> Alignment.CENTER;
+                        default -> Alignment.LEFT;
+                    };
+                    alignAndSend(player, component, align, width, mustBeResolved);
                 })
             )
 
@@ -59,7 +118,7 @@ public final class CalineaCommand {
                 .withOptionalArguments(new BooleanArgument("mustBeResolved"))
                 .executesPlayer((player, args) -> {
                     Component component = (Component) args.getOrDefault("component", Component.text("=== CALINEA TEST ==="));
-                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", false);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
 
                     // Resolve
                     if (mustBeResolved) {
@@ -82,14 +141,15 @@ public final class CalineaCommand {
                 })
             )
 
+            // split
             .withSubcommand(new CommandAPICommand("split")
                 .withArguments(new ChatComponentArgument("component"))
                 .withOptionalArguments(new IntegerArgument("maxWidth"))
                 .withOptionalArguments(new BooleanArgument("mustBeResolved"))
                 .executesPlayer((player, args) -> {
                     Component component = (Component) args.get("component");
-                    int maxWidth = (int) args.getOrDefault("maxWidth", 320);
-                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", false);
+                    int maxWidth = (int) args.getOrDefault("maxWidth", DEFAULT_WIDTH);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
 
                     // Resolve
                     if (mustBeResolved) {
@@ -99,73 +159,37 @@ public final class CalineaCommand {
                     // Split
                     List<Component> splits = Calinea.split(component, maxWidth).components();
 
-                    // Send each split part
+                    // Send header
+                    player.sendMessage(Component.text()
+                        .append(Component.text("Split into ", NamedTextColor.YELLOW))
+                        .append(Component.text(splits.size(), NamedTextColor.YELLOW, TextDecoration.BOLD))
+                        .append(Component.text(" parts (max width ", NamedTextColor.YELLOW))
+                        .append(Component.text(maxWidth, NamedTextColor.YELLOW, TextDecoration.BOLD))
+                        .append(Component.text("):", NamedTextColor.YELLOW))
+                        .build());
+
+                    // Send each part
                     for (var part : splits) {
                         player.sendMessage(part.hoverEvent(Component.text(part.toString())));
                     }
                 })
             )
 
-            // left
-            .withSubcommand(new CommandAPICommand("left")
-                .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new DoubleArgument("width"))
-                .executes((sender, args) -> {
-                    Component component = (Component) args.getOrDefault("component", Component.text("Left"));
-                    double width = (double) args.getOrDefault("width", 100.0);
-                    Component result = Calinea.alignLeft(component, width);
-                    sender.sendMessage(result);
-                })
-            )
-
-            // right
-            .withSubcommand(new CommandAPICommand("right")
-                .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new DoubleArgument("width"))
-                .executes((sender, args) -> {
-                    Component component = (Component) args.getOrDefault("component", Component.text("Right"));
-                    double width = (double) args.getOrDefault("width", 100.0);
-                    Component result = Calinea.alignRight(component, width);
-                    sender.sendMessage(result);
-                })
-            )
-
-            // align
-            .withSubcommand(new CommandAPICommand("align")
-                .withArguments(new MultiLiteralArgument("alignment", "left", "right", "center"))
-                .withOptionalArguments(new ChatComponentArgument("component"))
-                .withOptionalArguments(new DoubleArgument("width"))
-                .executes((sender, args) -> {
-                    String alignment = (String) args.getOrDefault("alignment", "left");
-                    Component component = (Component) args.getOrDefault("component", Component.text("Text"));
-                    double width = (double) args.getOrDefault("width", 100.0);
-
-                    Component result;
-                    switch (alignment) {
-                        case "left":
-                            result = Calinea.alignLeft(component, width);
-                            break;
-                        case "right":
-                            result = Calinea.alignRight(component, width);
-                            break;
-                        case "center":
-                            result = Calinea.center(component, width);
-                            break;
-                        default:
-                            result = Component.text("Invalid alignment: " + alignment);
-                            break;
-                    }
-                    sender.sendMessage(result);
-                })
-            )
-
             // separator
             .withSubcommand(new CommandAPICommand("separator")
                 .withOptionalArguments(new DoubleArgument("width"))
-                .executes((sender, args) -> {
-                    double width = (double) args.getOrDefault("width", 200.0);
-                    Component separator = Calinea.separator(width);
-                    sender.sendMessage(separator);
+                .withOptionalArguments(new BooleanArgument("mustBeResolved"))
+                .executesPlayer((player, args) -> {
+                    double width = (double) args.getOrDefault("width", DEFAULT_WIDTH);
+                    Component separator = Calinea.separator(Component.text("-", NamedTextColor.GRAY), width, true);
+                    boolean mustBeResolved = (boolean) args.getOrDefault("mustBeResolved", DEFAULT_MUST_BE_RESOLVED);
+
+                    // Resolve
+                    if (mustBeResolved) {
+                        separator = Calinea.resolve(separator, player, player);
+                    }
+
+                    player.sendMessage(separator);
                 })
             )
 
@@ -178,5 +202,44 @@ public final class CalineaCommand {
             )
 
             .register();
+    }
+
+    private static void alignAndSend(Entity entity, Component component, Alignment alignment, double width, boolean mustBeResolved) {
+        Component result;
+        LayoutBuilder layoutBuilder = Calinea.layout(component)
+            .width(width);
+
+        // Alignment
+        switch (alignment) {
+            case LEFT:
+                layoutBuilder = layoutBuilder.align(Alignment.LEFT);
+                break;
+            case RIGHT:
+                layoutBuilder = layoutBuilder.align(Alignment.RIGHT);
+                break;
+            case CENTER:
+                layoutBuilder = layoutBuilder.align(Alignment.CENTER);
+                break;
+        }
+
+        // Resolve
+        if (mustBeResolved) {
+            layoutBuilder = layoutBuilder.resolve(entity);
+        }
+
+        // Build
+        result = layoutBuilder.build();
+
+        // Send header with hover showing the component's toString()
+        entity.sendMessage(Component.text()
+            .append(Component.text("Aligned '", NamedTextColor.YELLOW))
+            .append(Component.text(alignment.name().toLowerCase(), NamedTextColor.YELLOW, TextDecoration.BOLD))
+            .append(Component.text("' ", NamedTextColor.YELLOW))
+            .append(Component.text(" (width ", NamedTextColor.YELLOW))
+            .append(Component.text(width, NamedTextColor.YELLOW, TextDecoration.BOLD))
+            .append(Component.text("):", NamedTextColor.YELLOW))
+            .appendNewline()
+            .append(result.hoverEvent(Component.text(result.toString()))) // Show the component and its content on hover
+            .build());
     }
 }

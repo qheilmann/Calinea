@@ -12,6 +12,7 @@ import io.calinea.Calinea;
 import io.calinea.config.CalineaConfig;
 import io.calinea.logger.CalineaLogger;
 import io.calinea.playground.Commands.CalineaCommand;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
 /**
@@ -60,7 +61,7 @@ public class CalineaPlayground extends JavaPlugin {
 
         CalineaCommand.register();
 
-        LOGGER.info(Calinea.center("=== CALINEA TEST ==="));
+        LOGGER.info(Calinea.center(Component.text("=== CALINEA ==="), 320));
     }
     
     @Override

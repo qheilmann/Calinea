@@ -119,8 +119,8 @@ public class TranslatableComponentHandler implements IComponentLayoutHandler<Tra
     
     private void warnIfUnforcedComponent(String identifier, String translation, double width) {
         // Warn that an unresolved TranslatableComponent is being measured
-        if (Calinea.getConfig().warnOnUnforcedClientComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnforcedClientComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unforced TranslatableComponent '%s' detected. " +
                 "Translatable components should be forced server-side before measurement. " +
                 "Falling back to the translation fallback ('%s':%.1f pixels), " +

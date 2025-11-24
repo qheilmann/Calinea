@@ -12,36 +12,36 @@ import io.calinea.segmentation.measurer.ComponentMeasurer;
 
 public class Splitter {
 
-    private final SplitterConfig config;
+    private final TextTokenizer tokenizer;
     private final ComponentMeasurer measurer;
 
-    public Splitter(SplitterConfig config, ComponentMeasurer measurer) {
-        this.config = config;
+    public Splitter(TextTokenizer tokenizer, ComponentMeasurer measurer) {
+        this.tokenizer = tokenizer;
         this.measurer = measurer;
     }
 
-    public SegmentationResult split(Component component) {
+    public SegmentationResult split(Component component, double maxWidth) {
         SegmentationState state = new SegmentationState();
-        traverse(component, state);
+        traverse(component, state, maxWidth);
         return new SegmentationResult(state.finish());
     }
 
-    private void traverse(Component component, SegmentationState state) {
+    private void traverse(Component component, SegmentationState state, double maxWidth) {
         // 1. Push Style (Merge current component style with parent)
         state.pushStyle(component.style());
 
         // 2. Handle Content & Children
         if (measurer.isAtomic(component)) {
-            handleAtomic(component, state);
+            handleAtomic(component, state, maxWidth);
         } else {
-            handleSplittable(component, state);
+            handleSplittable(component, state, maxWidth);
         }
 
         // 3. Pop Style
         state.popStyle();
     }
     
-    private void handleSplittable(Component component, SegmentationState state) {
+    private void handleSplittable(Component component, SegmentationState state, double maxWidth) {
         // Non-atomic component (TextComponent or TranslatableComponent)
         // We convert to a "text-like" representation for splitting purposes.
         TextComponent resolved = measurer.asTextComponent(component);
@@ -53,7 +53,7 @@ public class Splitter {
         String content = resolved.content();
         
         if (!content.isEmpty()) {
-            handleText(content, state);
+            handleText(content, state, maxWidth);
         }
         
         // If we replaced the component (e.g. Translatable -> Text structure), 
@@ -61,11 +61,11 @@ public class Splitter {
         // So we must traverse the 'resolved' structure's children.
         // If it wasn't replaced (Standard TextComponent), 'resolved' is 'component', so we traverse its children.
         for (Component child : resolved.children()) {
-            traverse(child, state);
+            traverse(child, state, maxWidth);
         }
     }
 
-    private void handleAtomic(Component component, SegmentationState state) {
+    private void handleAtomic(Component component, SegmentationState state, double maxWidth) {
         // Atomic component (e.g. Keybind, Score, Object, or unresolved Translatable if not converted to text)
         // We measure it as a whole block.
         
@@ -78,10 +78,10 @@ public class Splitter {
         // Note: measureRoot only measures the content of this component, not children
         double width = measurer.measureRoot(atom);
         
-        if (state.currentWidth() + width <= config.maxWidth()) {
+        if (state.currentWidth() + width <= maxWidth) {
             state.append(atom, width);
         } else {
-            // If it doesn't fit, wrap to new line
+            // If current line is not empty, wrap to new line first.
             if (state.currentWidth() > 0) {
                 state.newLine();
             }
@@ -91,15 +91,14 @@ public class Splitter {
 
         // Atomic components can still have children that need to be traversed
         for (Component child : component.children()) {
-            traverse(child, state);
+            traverse(child, state, maxWidth);
         }
     }
 
-    private void handleText(String text, SegmentationState state) {
+    private void handleText(String text, SegmentationState state, double maxWidth) {
         Style style = state.currentStyle();
-        double maxWidth = config.maxWidth();
         
-        List<String> tokens = config.tokenizer().tokenize(text);
+        List<String> tokens = tokenizer.tokenize(text);
         
         for (int i = 0; i < tokens.size(); i++) {
             String token = tokens.get(i);
@@ -124,16 +123,15 @@ public class Splitter {
                 
                 // If the token is whitespace and we are at the start of a line, skip it.
                 // This prevents lines from starting with a space.
-                if (state.currentWidth() == 0 && token.isBlank()) {
+                if (token.isBlank() && state.currentWidth() == 0) {
                     continue;
                 }
                 
-                // Check if it fits on the new line
-                if (tokenWidth <= maxWidth) {
-                    state.append(Component.text(token, style), tokenWidth);
-                } else {
-                    // Token is too long even for a full line. Split by character.
+                // If the token itself is wider than maxWidth, we must split it by character.
+                if (tokenWidth > maxWidth) {
                     splitByChar(token, style, state, maxWidth);
+                } else {
+                    state.append(Component.text(token, style), tokenWidth);
                 }
             }
         }

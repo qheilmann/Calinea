@@ -24,8 +24,8 @@ public class BlockNBTComponentHandler implements IComponentLayoutHandler<BlockNB
     public double measureRoot(BlockNBTComponent component) {
 
         // Warn that an unresolved BlockNBTComponent is being measured
-        if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnresolvedServerComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unresolved BlockNBTComponent detected - position:\"%s\". " +
                 "It should be resolved server-side before measurement. " +
                 "Falling back to an empty component. " +

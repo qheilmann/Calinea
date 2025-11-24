@@ -24,8 +24,8 @@ public class EntityNBTComponentHandler implements IComponentLayoutHandler<Entity
     public double measureRoot(EntityNBTComponent component) {
 
         // Warn that an unresolved EntityNBTComponent is being measured
-        if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnresolvedServerComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unresolved EntityNBTComponent detected - '%s'. " +
                 "It should be resolved server-side before measurement. " +
                 "Falling back to an empty component. " +

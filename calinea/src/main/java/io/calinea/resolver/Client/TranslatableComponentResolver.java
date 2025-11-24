@@ -17,9 +17,9 @@ public class TranslatableComponentResolver implements IClientComponentResolver<T
 
         TextComponent result = TranslatableComponentUtils.flattenInEnglish(translatableComponent);
 
-        if (Calinea.getConfig().warnOnUnforcedClientComponents()) {
+        if (Calinea.config().warnOnUnforcedClientComponents()) {
             String translationPattern = TranslatableComponentUtils.extractEnglishTranslation(translatableComponent);
-            Calinea.getLogger().info("TranslatableComponent resolution is not fully supported yet, and can't be customized, it will be replaced with the english fallback: " + translationPattern);
+            Calinea.logger().info("TranslatableComponent resolution is not fully supported yet, and can't be customized, it will be replaced with the english fallback: " + translationPattern);
         }
 
         return result;

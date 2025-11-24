@@ -24,8 +24,8 @@ public class ScoreComponentHandler implements IComponentLayoutHandler<ScoreCompo
     public double measureRoot(ScoreComponent component) {
 
         // Warn that an unresolved ScoreComponent is being measured
-        if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnresolvedServerComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unresolved ScoreComponent detected - '%s'. " +
                 "It should be resolved server-side before measurement. " +
                 "Falling back to an empty component. " +

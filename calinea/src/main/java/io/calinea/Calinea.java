@@ -1,6 +1,8 @@
 package io.calinea;
 
 import java.nio.file.Path;
+import java.util.Collections;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jspecify.annotations.Nullable;
@@ -8,17 +10,13 @@ import org.jspecify.annotations.Nullable;
 import io.calinea.config.CalineaConfig;
 import io.calinea.font.PackInfo;
 import io.calinea.font.reader.JsonFontReader;
+import io.calinea.layout.Alignment;
+import io.calinea.layout.LayoutBuilder;
+import io.calinea.layout.LayoutContext;
 import io.calinea.logger.CalineaLogger;
-import io.calinea.resolver.ComponentResolver;
 import io.calinea.segmentation.SegmentationResult;
-import io.calinea.segmentation.measurer.ComponentMeasurer;
-import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
-import io.calinea.segmentation.splitter.Splitter;
-import io.calinea.segmentation.splitter.SplitterConfig;
-import io.calinea.segmentation.splitter.TextTokenizer;
-import io.calinea.space.SpaceFont;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.JoinConfiguration;
 
 /**
  * Calinea - Adventure Component Manipulation Library
@@ -40,76 +38,83 @@ public class Calinea {
 
     private static @Nullable PackInfo packInfo;
     private static @Nullable CalineaConfig config;
+    private static @Nullable LayoutContext layoutContext;
 
+    private Calinea() {
+        throw new UnsupportedOperationException("Utility class - do not instantiate");
+    }
+
+    /**
+     * Initializes Calinea with the given configuration.
+     * <p>
+     * This should be called once during application/plugin startup.
+     * </p>
+     * 
+     * @param config the Calinea configuration
+     */
     public static void onLoad(CalineaConfig config) {
         Calinea.config = config;
         reloadFonts();
     }
 
-    public static CalineaConfig getConfig() {
+    /**
+     * Gets the current Calinea configuration.
+     * 
+     * @return the Calinea configuration
+     */
+    public static CalineaConfig config() {
         if (config == null) {
             throw new IllegalStateException("Tried to access Calinea config, but it was not initialized! Are you using Calinea features before calling Calinea#onLoad?");
         }
         return config;
     }
 
-    public static CalineaLogger getLogger() {
-        return getConfig().logger();
+    /**
+     * Gets the Calinea logger.
+     * 
+     * @return the Calinea logger
+     */
+    public static CalineaLogger logger() {
+        return config().logger();
+    }
+
+    /**
+     * Gets the current LayoutContext.
+     * 
+     * @return the layout context
+     */
+    public static LayoutContext layoutContext() {
+        if (layoutContext == null) {
+            throw new IllegalStateException("Tried to access Calinea layout context, but it was not initialized! Are you using Calinea features before calling Calinea#onLoad?");
+        }
+        return layoutContext;
     }
 
     public static void reloadFonts() {
 
-        Path fontInfoPath = getConfig().fontInfoPath();
-        JsonFontReader reader = new JsonFontReader();
+        Path fontInfoPath = config().fontInfoPath();
 
         try {
-            packInfo = reader.readFonts(fontInfoPath);
+            packInfo = createPackInfo(fontInfoPath);
+            layoutContext = new LayoutContext.Builder(packInfo).build();
         } catch (Exception e) {
             throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
         }
     }
 
-    public static Component resolve(Component component, CommandSender context, Entity scoreboardSubject) {
-        ComponentResolver resolver = new ComponentResolver();
-        return resolver.resolve(component, context, scoreboardSubject);
-    }
-    
-    public static double measure(Component component) {
-        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
-        return measurer.measure(component);
-    }
-    
-    public static double resolveAndMeasure(Component component, CommandSender context, Entity scoreboardSubject) {
-        component = resolve(component, context, scoreboardSubject);
-        return measureWidth(component);
-    }
-
-    public static SegmentationResult split(Component component, int maxWidth) {
-        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
-        SplitterConfig splitterConfig = new SplitterConfig(maxWidth, new TextTokenizer.Default());
-        Splitter splitter = new Splitter(splitterConfig, measurer);
-        return splitter.split(component);
-    }
-
+    //#region Static API Methods
 
     /**
-     * Centers text within the default Minecraft chat width (320 pixels).
+     * Creates a new LayoutBuilder for the given component.
+     * <p>
+     * This is the entry point for creating complex layouts with fluent API.
+     * </p>
      * 
-     * @param text the text to center
-     * @return centered component
+     * @param component the component to layout
+     * @return a new LayoutBuilder
      */
-    public static Component center(String text) {
-        return center(Component.text(text));
-    }
-    
-    /**
-     * Centers a component within the default Minecraft chat width (320 pixels).
-     * 
-     * @param component the component to center
-     * @return centered component
-     */
-    public static Component center(Component component) {
-        return center(component, 320); // Default Minecraft chat width
+    public static LayoutBuilder layout(Component component) {
+        return new LayoutBuilder(component);
     }
     
     /**
@@ -120,24 +125,12 @@ public class Calinea {
      * @return centered component
      */
     public static Component center(Component component, double totalWidth) {
-        double componentWidth = measureWidth(component);
-        double sideWidth = (totalWidth - componentWidth) / 2;
-        Calinea.getLogger().info(String.valueOf(sideWidth));
-        Component sideComponent = Component.text(SpaceFont.space(sideWidth));
-        return Component.textOfChildren(sideComponent, component, sideComponent);
+        return new LayoutBuilder(component)
+            .width(totalWidth)
+            .align(Alignment.CENTER)
+            .build();
     }
-
-    /**
-     * Aligns text to the left within a specific width.
-     * 
-     * @param text the text to align
-     * @param totalWidth the total width to align within
-     * @return left-aligned component
-     */
-    public static Component alignLeft(String text, double totalWidth) {
-        return alignLeft(Component.text(text), totalWidth);
-    }
-    
+   
     /**
      * Aligns a component to the left within a specific width.
      * 
@@ -146,20 +139,10 @@ public class Calinea {
      * @return left-aligned component
      */
     public static Component alignLeft(Component component, double totalWidth) {
-        double componentWidth = measureWidth(component);
-        double padding = Math.max(0, totalWidth - componentWidth) / 4; // Divide by 4 for space character width
-        return component.append(Component.text(" ".repeat((int) padding)));
-    }
-    
-    /**
-     * Aligns text to the right within a specific width.
-     * 
-     * @param text the text to align
-     * @param totalWidth the total width to align within
-     * @return right-aligned component
-     */
-    public static Component alignRight(String text, double totalWidth) {
-        return alignRight(Component.text(text), totalWidth);
+        return new LayoutBuilder(component)
+            .width(totalWidth)
+            .align(Alignment.LEFT)
+            .build();
     }
     
     /**
@@ -170,48 +153,108 @@ public class Calinea {
      * @return right-aligned component
      */
     public static Component alignRight(Component component, double totalWidth) {
-        double componentWidth = measureWidth(component);
-        double padding = Math.max(0, totalWidth - componentWidth) / 4; // Divide by 4 for space character width
-        return Component.text(" ".repeat((int) padding)).append(component);
+        return new LayoutBuilder(component)
+            .width(totalWidth)
+            .align(Alignment.RIGHT)
+            .build();
     }
     
+    /**
+     * Resolves a component in the given context.
+     * 
+     * @param component the component to resolve
+     * @param context the command sender context
+     * @param scoreboardSubject the entity for scoreboard resolution
+     * @return resolved component
+     */
+    public static Component resolve(Component component, CommandSender context, Entity scoreboardSubject) {
+        return layoutContext().componentResolver().resolve(component, context, scoreboardSubject);
+    }
+
     /**
      * Measures the pixel width of a component.
      * 
      * @param component the component to measure
      * @return width in pixels
      */
-    public static double measureWidth(Component component) {
-        ComponentMeasurer measurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
-        return measurer.measure(component);
+    public static double measure(Component component) {
+        return layoutContext().componentMeasurer().measure(component);
     }
     
     /**
-     * Measures the pixel width of text.
+     * Resolves and then measures the pixel width of a component.
      * 
-     * @param text the text to measure
+     * @param component the component to resolve and measure
+     * @param context the command sender context
+     * @param scoreboardSubject the entity for scoreboard resolution
      * @return width in pixels
      */
-    public static double measureWidth(String text) {
-        return measureWidth(Component.text(text));
+    public static double resolveAndMeasure(Component component, CommandSender context, Entity scoreboardSubject) {
+        component = resolve(component, context, scoreboardSubject);
+        return measure(component);
+    }
+
+    /**
+     * Splits a component into segments that fit within the specified width.
+     * 
+     * @param component the component to split
+     * @param maxWidth the maximum width in pixels
+     * @return segmentation result containing the segments
+     */
+    public static SegmentationResult split(Component component, int maxWidth) {
+        return layoutContext().splitter().split(component, maxWidth);
     }
     
     /**
-     * Creates a separator line of a specific width.
+     * Creates a centered separator line of a specific width.
      * 
+     * @param component the component to use as the separator
      * @param width the width in pixels
+     * @param repeatToFill whether to repeat the component to fill the width
      * @return separator component
      */
-    public static Component separator(double width) {
-        int dashCount = (int) (width / 5); // Approximate width of a dash
-        return Component.text("-".repeat(dashCount)).color(NamedTextColor.GRAY);
+    public static Component separator(Component component, double width, boolean repeatToFill) {
+        double componentWidth = measure(component);
+
+        if (repeatToFill) {
+            int repeatCount = (int) Math.floor(width / componentWidth);
+            component = Component.join(JoinConfiguration.noSeparators(),
+                Collections.nCopies(repeatCount, component)
+            );
+            componentWidth = componentWidth * repeatCount;
+        }
+
+        return Calinea.center(component, width);
     }
-    
+
     /**
-     * Private constructor to prevent instantiation.
-     * This is a utility class with only static methods.
+     * Creates a new LayoutContext.Builder with the given pack info.
+     * <p>
+     * Use this to create a custom layout context with specific configuration.
+     * </p>
+     * 
+     * @param packInfo the pack info to use
+     * @return a new LayoutContext.Builder
      */
-    private Calinea() {
-        throw new UnsupportedOperationException("Utility class - do not instantiate");
+    public static LayoutContext.Builder createContext(PackInfo packInfo) {
+        return new LayoutContext.Builder(packInfo);
     }
+
+    /**
+     * Creates PackInfo from the given font info path.
+     * 
+     * @param fontInfoPath the path to the font info JSON file
+     * @return the created PackInfo
+     */
+    public static PackInfo createPackInfo(Path fontInfoPath) {
+        JsonFontReader reader = new JsonFontReader();
+
+        try {
+            return reader.readFonts(fontInfoPath);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
+        }
+    }
+
+    //#endregion Static API Methods
 }

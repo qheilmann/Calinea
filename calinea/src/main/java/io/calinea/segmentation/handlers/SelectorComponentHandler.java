@@ -38,8 +38,8 @@ public class SelectorComponentHandler implements IComponentLayoutHandler<Selecto
         Double width = textMeasurer.measureTextWidth(content, fontKey, isBold);
 
         // Warn that an unresolved SelectorComponent is being measured
-        if (Calinea.getConfig().warnOnUnresolvedServerComponents()) {
-            Calinea.getLogger().warning(String.format(
+        if (Calinea.config().warnOnUnresolvedServerComponents()) {
+            Calinea.logger().warning(String.format(
                 "Unresolved SelectorComponent detected - '%s'. " +
                 "It should be resolved server-side before measurement. " +
                 "Falling back to the pattern itself (%.1f pixels). " +
