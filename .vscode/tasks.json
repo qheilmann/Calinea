@@ -3,6 +3,8 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
 
+    // On Windows you need to set the default terminal profile to something like "Git Bash" (ctrl+shift+p > workbench.action.terminal.selectDefaultShell > "Git Bash") 
+
     // Default configuration
     "options": {
         "env": {
@@ -22,14 +24,12 @@
             "command": "./gradlew ResolveBuildCopyPipeline",
             "runOptions": {
                 "instancePolicy": "terminateOldest",
-                "instanceLimit": 1
             },
         },
         {
             "label": "Paper Server run",
             "type": "shell",
             "command": [
-                // On Windows you need to set the default terminal profile to something like "Git Bash" (ctrl+shift+p > workbench.action.terminal.selectDefaultShell > "Git Bash") 
                 "set a-",
                 "&& . \"${ENV_FILE}\"",
                 "&& cd \"$SERVER_PATH\"",
@@ -38,11 +38,9 @@
             ],
             "runOptions": {
                 "instancePolicy": "terminateOldest",
-                "instanceLimit": 1
             },
         },
         {
-            // On Windows you need to set the default terminal profile to something like "Git Bash" (ctrl+shift+p > workbench.action.terminal.selectDefaultShell > "Git Bash") 
             "label": "Paper Server run (HotSwap)",
             "type": "shell",
             "command": [
@@ -56,7 +54,64 @@
             ],
             "runOptions": {
                 "instancePolicy": "terminateOldest",
-                "instanceLimit": 1
+            },
+        },
+        {
+            "label": "Stop Paper Server (intermediate)",
+            "type": "shell",
+            "command": [
+                "set a-",
+                "&& . \"${ENV_FILE}\"",
+                "&& mcrcon.exe -H \"${MCRCON_HOST}\" -P \"${MCRCON_PORT}\" -p \"${MCRCON_PASS}\" stop || echo 'Server not running or already stopped'"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "close": true
+            },
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+            },
+            "hide": true
+        },
+        {
+            "label": "Wait for Server Stop (intermediate)",
+            "type": "shell",
+            "command": "for i in {1..10}; do netstat -ano | grep ':1000 ' | grep 'LISTENING' > /dev/null 2>&1 || break; sleep 1; done && echo 'Server fully stopped'",
+            "presentation": {
+                "reveal": "silent",
+                "close": true
+            },
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+            },
+            "hide": true
+        },
+        {
+            "label": "Stop & Build (intermediate)",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "Stop Paper Server (intermediate)",
+                "ResolveBuildCopyPipeline"
+            ],
+            "presentation": {
+                "reveal": "silent",
+                "close": true
+            },
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
+            },
+            "hide": true
+        },
+        {
+            "label": "Build & Restart Server",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Stop & Build (intermediate)",
+                "Wait for Server Stop (intermediate)",
+                "Paper Server run (HotSwap)"
+            ],
+            "runOptions": {
+                "instancePolicy": "terminateOldest",
             },
         }
     ]
