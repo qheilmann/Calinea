@@ -16,6 +16,7 @@ import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import io.calinea.segmentation.splitter.Splitter;
 import io.calinea.segmentation.splitter.SplitterConfig;
 import io.calinea.segmentation.splitter.TextTokenizer;
+import io.calinea.space.SpaceFont;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -120,10 +121,12 @@ public class Calinea {
      */
     public static Component center(Component component, double totalWidth) {
         double componentWidth = measureWidth(component);
-        double padding = Math.max(0, (totalWidth - componentWidth) / 2 / 4); // Divide by 4 for space character width
-        return Component.text(" ".repeat((int) padding)).append(component);
+        double sideWidth = (totalWidth - componentWidth) / 2;
+        Calinea.getLogger().info(String.valueOf(sideWidth));
+        Component sideComponent = Component.text(SpaceFont.space(sideWidth));
+        return Component.textOfChildren(sideComponent, component, sideComponent);
     }
-    
+
     /**
      * Aligns text to the left within a specific width.
      * 
