@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
@@ -17,6 +18,7 @@ import io.calinea.layout.Alignment;
 import io.calinea.layout.LayoutBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public final class CalineaCommand {
@@ -32,6 +34,7 @@ public final class CalineaCommand {
                                     /calinea right [component] [width] [mustBeResolved]
                                     /calinea align (left|right|center) [component] [width] [mustBeResolved]
                                     /calinea separator [width] [mustBeResolved]
+                                    /calinea example [exampleName] [width]
                                     /calinea reload
                                     """;
 
@@ -130,12 +133,12 @@ public final class CalineaCommand {
                     double width = Calinea.measure(component);
 
                     //Format and send message
-                    Component result = Component.text()
-                        .append(Component.text("Width of '", NamedTextColor.GRAY))
+                    Component result = Component.text().style(Style.style(NamedTextColor.YELLOW))
+                        .append(Component.text("Width of '"))
                         .append(component.hoverEvent(Component.text(component.toString()))) // Show the component and its content on hover
-                        .append(Component.text("': ", NamedTextColor.GRAY))
-                        .append(Component.text(width, NamedTextColor.GRAY, TextDecoration.BOLD))
-                        .append(Component.text(" pixels", NamedTextColor.GRAY))
+                        .append(Component.text("': "))
+                        .append(Component.text(String.valueOf(width), Style.style(TextDecoration.BOLD)))
+                        .append(Component.text(" pixels"))
                         .build();
 
                     player.sendMessage(result);
@@ -161,12 +164,12 @@ public final class CalineaCommand {
                     List<Component> splits = Calinea.split(component, maxWidth).components();
 
                     // Send header
-                    player.sendMessage(Component.text()
-                        .append(Component.text("Split into ", NamedTextColor.YELLOW))
-                        .append(Component.text(splits.size(), NamedTextColor.YELLOW, TextDecoration.BOLD))
-                        .append(Component.text(" parts (max width ", NamedTextColor.YELLOW))
-                        .append(Component.text(maxWidth, NamedTextColor.YELLOW, TextDecoration.BOLD))
-                        .append(Component.text("):", NamedTextColor.YELLOW))
+                    player.sendMessage(Component.text().style(Style.style(NamedTextColor.YELLOW))
+                        .append(Component.text("Split into "))
+                        .append(Component.text(String.valueOf(splits.size()), Style.style(TextDecoration.BOLD)))
+                        .append(Component.text(" parts (max width: "))
+                        .append(Component.text(String.valueOf(maxWidth), Style.style(TextDecoration.BOLD)))
+                        .append(Component.text("):"))
                         .build());
 
                     // Send each part
@@ -190,7 +193,45 @@ public final class CalineaCommand {
                         separator = Calinea.resolve(separator, player, player);
                     }
 
+                    player.sendMessage(Component.text().style(Style.style(NamedTextColor.YELLOW))
+                        .append(Component.text("Separator '"))
+                        .append(separator.hoverEvent(Component.text(separator.toString()))) // Show the component and its content on hover
+                        .append(Component.text("' (width: "))
+                        .append(Component.text(String.valueOf(width), Style.style(TextDecoration.BOLD)))
+                        .append(Component.text("):"))
+                        .build());
                     player.sendMessage(separator);
+                })
+            )
+
+            // example
+            .withSubcommand(new CommandAPICommand("example")
+                .withArguments(new MultiLiteralArgument("exampleName", "AliceLetter", "SimpleCenter"))
+                .withOptionalArguments(new DoubleArgument("width"))
+                .executesPlayer((player, args) -> {
+                    String exampleName = (String) args.getOrDefault("exampleName", "AliceLetter");
+                    double width = (double) args.getOrDefault("width", 300.0);
+
+                    player.sendMessage(Component.text().style(Style.style(NamedTextColor.YELLOW))
+                        .append(Component.text("Example '"))
+                        .append(Component.text(exampleName, Style.style(TextDecoration.BOLD)))
+                        .append(Component.text(" (width: "))
+                        .append(Component.text(String.valueOf(width), Style.style(TextDecoration.BOLD)))
+                        .append(Component.text("):"))
+                        .build());
+
+                    switch (exampleName) {
+                        case "AliceLetter":
+                            exampleAliceLetter(player, width);
+                            break;
+                        case "SimpleCenter":
+                            exampleSimpleCenter(player, width);
+                            break;
+                    
+                        default:
+                            player.sendMessage(Component.text("Unknown example: " + exampleName, NamedTextColor.RED));
+                            break;
+                    }
                 })
             )
 
@@ -243,15 +284,68 @@ public final class CalineaCommand {
         result = layoutBuilder.build();
 
         // Send header with hover showing the component's toString()
-        entity.sendMessage(Component.text()
-            .append(Component.text("Aligned '", NamedTextColor.YELLOW))
-            .append(Component.text(alignment.name().toLowerCase(), NamedTextColor.YELLOW, TextDecoration.BOLD))
-            .append(Component.text("' ", NamedTextColor.YELLOW))
-            .append(Component.text(" (width ", NamedTextColor.YELLOW))
-            .append(Component.text(width, NamedTextColor.YELLOW, TextDecoration.BOLD))
-            .append(Component.text("):", NamedTextColor.YELLOW))
+        entity.sendMessage(Component.text().style(Style.style(NamedTextColor.YELLOW))
+            .append(Component.text("Aligned '"))
+            .append(Component.text(alignment.name().toLowerCase(), Style.style(TextDecoration.BOLD)))
+            .append(Component.text("' (width: "))
+            .append(Component.text(String.valueOf(width), Style.style(TextDecoration.BOLD)))
+            .append(Component.text("):"))
             .appendNewline()
             .append(result.hoverEvent(Component.text(result.toString()))) // Show the component and its content on hover
             .build());
+    }
+
+    
+    private static void exampleAliceLetter(Player player, double width) {
+        if (width <= 20) {
+            player.sendMessage(Component.text("Width too small for Alice's letter example because there is a 20px right offset on the signature.", NamedTextColor.RED));
+            return;
+        }
+
+        Component title = Component.text("Lettre de l'astronaute mystère", Style.style(TextDecoration.BOLD, TextDecoration.UNDERLINED));
+        Component date = Component.text("Fait à Paris, le 14 juillet 2023");
+        Component intro = Component.text("Cher ").append(Component.selector("@s")).appendNewline().appendNewline();
+        Component signature = Component.text("-", NamedTextColor.DARK_GRAY).append(Component.text("XXXXX", Style.style(TextDecoration.OBFUSCATED)));
+        String text = "Je t'écris de mon vaisseau spatial, en orbite autour de la Terre. Tout va bien ici. " +
+            "La vue est magnifique, et je pense souvent à toi. J'espère que tout se passe bien pour toi là-bas. " +
+            "Prends soin de toi et écris-moi vite !\n\nJe t'embrasse fort,";
+
+        Component body = intro.append(Component.text(text, NamedTextColor.LIGHT_PURPLE));
+        Component allignedBody = Calinea.layout(body)
+            .width(width)
+            .align(Alignment.LEFT)
+            .resolve(player)
+            .build();
+
+        Component letter = Component.text()
+            .append(Calinea.center(title, width)).appendNewline().appendNewline() // Center title
+            .append(Calinea.alignRight(date, width)).appendNewline()              // Right-align date
+            .append(allignedBody).appendNewline()                                 // Automatic line breaks
+            .append(Calinea.alignRight(signature, width, 20))       // Right-align signature with a -20 pixel offset
+            .build();
+
+        player.sendMessage(letter);
+    }
+
+    private static void exampleSimpleCenter(Player player, double width) {
+        Component complexComponent = Component.text()
+            .append(Component.text("=== ", NamedTextColor.DARK_AQUA))
+            .append(Component.text("Calinea ", NamedTextColor.AQUA, TextDecoration.BOLD))
+            .append(Component.text("Playground ", NamedTextColor.DARK_AQUA))
+            .append(Component.text("===\n", NamedTextColor.DARK_AQUA))
+            .append(Component.text("This is an ", NamedTextColor.WHITE))
+            .append(Component.text("example ", NamedTextColor.GOLD, TextDecoration.ITALIC))
+            .append(Component.text("of a ", NamedTextColor.WHITE))
+            .append(Component.text("complex ", NamedTextColor.LIGHT_PURPLE, TextDecoration.UNDERLINED))
+            .append(Component.text("component.", NamedTextColor.WHITE))
+            .build();
+
+        Component centered = Calinea.layout(complexComponent)
+            .width(width)
+            .align(Alignment.CENTER)
+            .resolve(player)
+            .build();
+
+        player.sendMessage(centered);
     }
 }
