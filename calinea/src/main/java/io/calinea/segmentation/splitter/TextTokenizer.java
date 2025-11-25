@@ -39,7 +39,7 @@ public interface TextTokenizer {
     List<String> tokenize(String text);
 
     /**
-     * Default implementation that splits by space and newline.
+     * Default implementation that splits by space and newline, and after dashes.
      */
     class Default implements TextTokenizer {
         @Override
@@ -56,6 +56,10 @@ public interface TextTokenizer {
                         currentToken.setLength(0);
                     }
                     tokens.add(String.valueOf(c));
+                } else if (c == '-') {
+                    currentToken.append(c);
+                    tokens.add(currentToken.toString());
+                    currentToken.setLength(0);
                 } else {
                     currentToken.append(c);
                 }
