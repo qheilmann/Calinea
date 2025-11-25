@@ -1,6 +1,7 @@
 package io.calinea.playground.Commands;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.entity.Entity;
 
@@ -196,8 +197,19 @@ public final class CalineaCommand {
             // reload
             .withSubcommand(new CommandAPICommand("reload")
                 .executes((sender, args) -> {
-                    Calinea.reloadFonts();
-                    sender.sendMessage(Component.text("Calinea fonts reloaded."));
+
+                    sender.sendMessage("Reloading calinea configuration ...");
+
+                    CompletableFuture.runAsync(() -> {
+                        Calinea.reloadFonts();
+                    })
+                    .thenAccept(aVoid -> {
+                        sender.sendMessage(Component.text("Calinea configuration reloaded", NamedTextColor.GREEN));
+                    })
+                    .exceptionally(ex -> {
+                        Calinea.logger().severe("Failed to reload calinea configuration", ex);
+                        return null;
+                    });
                 })
             )
 
