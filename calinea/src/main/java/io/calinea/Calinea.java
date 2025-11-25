@@ -139,9 +139,22 @@ public class Calinea {
      * @return left-aligned component
      */
     public static Component alignLeft(Component component, double totalWidth) {
+        return alignLeft(component, totalWidth, 0);
+    }
+
+    /**
+     * Aligns a component to the left within a specific width.
+     * 
+     * @param component the component to align
+     * @param totalWidth the total width to align within
+     * @param leftPadding the left padding in pixels
+     * @return left-aligned component
+     */
+    public static Component alignLeft(Component component, double totalWidth, double leftPadding) {
         return new LayoutBuilder(component)
             .width(totalWidth)
             .align(Alignment.LEFT)
+            .padding(leftPadding, 0)
             .build();
     }
     
@@ -153,9 +166,22 @@ public class Calinea {
      * @return right-aligned component
      */
     public static Component alignRight(Component component, double totalWidth) {
+        return alignRight(component, totalWidth, 0);
+    }
+
+    /**
+     * Aligns a component to the right within a specific width.
+     * 
+     * @param component the component to align
+     * @param totalWidth the total width to align within
+     * @param rightPadding the right padding in pixels
+     * @return right-aligned component
+     */
+    public static Component alignRight(Component component, double totalWidth, double rightPadding) {
         return new LayoutBuilder(component)
             .width(totalWidth)
             .align(Alignment.RIGHT)
+            .padding(0, rightPadding)
             .build();
     }
     
