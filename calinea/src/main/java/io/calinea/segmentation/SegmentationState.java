@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 
-import io.calinea.segmentation.measurer.ComponentMeasurer;
+import io.calinea.segmentation.measurer.IComponentMeasurer;
 
 public class SegmentationState {
 
@@ -92,7 +92,7 @@ public class SegmentationState {
         return currentLineWidth;
     }
 
-    public void trimTrailingSpace(ComponentMeasurer measurer) {
+    public void trimTrailingSpace(IComponentMeasurer measurer) {
         // 1. Check pendingText
         if (pendingText.length() > 0) {
             if (pendingText.charAt(pendingText.length() - 1) == ' ') {

@@ -8,7 +8,7 @@ import io.calinea.resolver.Server.ServerComponentResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
-public class ComponentResolver {
+public class ComponentResolver implements IComponentResolver{
     
     public Component resolve(ComponentLike componentLike, CommandSender context, Entity scoreboardSubject) {
         

@@ -2,8 +2,10 @@ package io.calinea.layout;
 
 import io.calinea.font.PackInfo;
 import io.calinea.resolver.ComponentResolver;
+import io.calinea.resolver.IComponentResolver;
 import io.calinea.segmentation.measurer.ComponentMeasurer;
 import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
+import io.calinea.segmentation.measurer.IComponentMeasurer;
 import io.calinea.segmentation.splitter.TextTokenizer;
 import io.calinea.segmentation.splitter.Splitter;
 
@@ -15,14 +17,14 @@ import io.calinea.segmentation.splitter.Splitter;
  * </p>
  * <p>
  * Use {@link Builder} to create custom instances, or access the default
- * instance via {@link io.calinea.Calinea#layoutContext()}.
+ * instance via {@link io.calinea.Calinea#defaultLayoutContext()}.
  * </p>
  */
 public class LayoutContext {
     private final PackInfo packInfo;
     private final TextTokenizer textTokenizer;
-    private final ComponentResolver componentResolver;
-    private final ComponentMeasurer componentMeasurer;
+    private final IComponentResolver componentResolver;
+    private final IComponentMeasurer componentMeasurer;
     private final Splitter splitter;
 
     /**
@@ -32,11 +34,11 @@ public class LayoutContext {
      * @param textTokenizer     the tokenizer for splitting text
      * @param componentResolver the resolver for translating components
      */
-    public LayoutContext(PackInfo packInfo, TextTokenizer textTokenizer, ComponentResolver componentResolver) {
+    public LayoutContext(PackInfo packInfo, TextTokenizer textTokenizer, IComponentResolver componentResolver, IComponentMeasurer componentMeasurer) {
         this.packInfo = packInfo;
         this.textTokenizer = textTokenizer;
         this.componentResolver = componentResolver;
-        this.componentMeasurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
+        this.componentMeasurer = componentMeasurer;
         this.splitter = new Splitter(textTokenizer, componentMeasurer);
     }
 
@@ -63,7 +65,7 @@ public class LayoutContext {
      *
      * @return the resolver
      */
-    public ComponentResolver componentResolver() {
+    public IComponentResolver componentResolver() {
         return componentResolver;
     }
 
@@ -72,7 +74,7 @@ public class LayoutContext {
      *
      * @return the measurer
      */
-    public ComponentMeasurer componentMeasurer() {
+    public IComponentMeasurer componentMeasurer() {
         return componentMeasurer;
     }
 
@@ -91,7 +93,8 @@ public class LayoutContext {
     public static class Builder {
         private final PackInfo packInfo;
         private TextTokenizer textTokenizer;
-        private ComponentResolver componentResolver;
+        private IComponentResolver componentResolver;
+        private IComponentMeasurer componentMeasurer;
 
         /**
          * Creates a new builder with the required pack info.
@@ -102,6 +105,7 @@ public class LayoutContext {
             this.packInfo = packInfo;
             this.textTokenizer = new TextTokenizer.Default();
             this.componentResolver = new ComponentResolver();
+            this.componentMeasurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
         }
 
         /**
@@ -121,8 +125,19 @@ public class LayoutContext {
          * @param componentResolver the resolver to use
          * @return this builder
          */
-        public Builder componentResolver(ComponentResolver componentResolver) {
+        public Builder componentResolver(IComponentResolver componentResolver) {
             this.componentResolver = componentResolver;
+            return this;
+        }
+
+        /**
+         * Sets a custom component measurer.
+         *
+         * @param componentMeasurer the measurer to use
+         * @return this builder
+         */
+        public Builder componentMeasurer(IComponentMeasurer componentMeasurer) {
+            this.componentMeasurer = componentMeasurer;
             return this;
         }
 
@@ -132,7 +147,7 @@ public class LayoutContext {
          * @return the new context
          */
         public LayoutContext build() {
-            return new LayoutContext(packInfo, textTokenizer, componentResolver);
+            return new LayoutContext(packInfo, textTokenizer, componentResolver, componentMeasurer);
         }
     }
 }

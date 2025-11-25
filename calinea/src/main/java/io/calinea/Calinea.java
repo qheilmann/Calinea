@@ -38,7 +38,7 @@ public class Calinea {
 
     private static @Nullable PackInfo packInfo;
     private static @Nullable CalineaConfig config;
-    private static @Nullable LayoutContext layoutContext;
+    private static @Nullable LayoutContext defaultLayoutContext;
 
     private Calinea() {
         throw new UnsupportedOperationException("Utility class - do not instantiate");
@@ -83,11 +83,11 @@ public class Calinea {
      * 
      * @return the layout context
      */
-    public static LayoutContext layoutContext() {
-        if (layoutContext == null) {
+    public static LayoutContext defaultLayoutContext() {
+        if (defaultLayoutContext == null) {
             throw new IllegalStateException("Tried to access Calinea layout context, but it was not initialized! Are you using Calinea features before calling Calinea#onLoad?");
         }
-        return layoutContext;
+        return defaultLayoutContext;
     }
 
     public static void reloadFonts() {
@@ -96,7 +96,7 @@ public class Calinea {
 
         try {
             packInfo = createPackInfo(fontInfoPath);
-            layoutContext = new LayoutContext.Builder(packInfo).build();
+            defaultLayoutContext = new LayoutContext.Builder(packInfo).build();
         } catch (Exception e) {
             throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
         }
@@ -168,7 +168,7 @@ public class Calinea {
      * @return resolved component
      */
     public static Component resolve(Component component, CommandSender context, Entity scoreboardSubject) {
-        return layoutContext().componentResolver().resolve(component, context, scoreboardSubject);
+        return defaultLayoutContext().componentResolver().resolve(component, context, scoreboardSubject);
     }
 
     /**
@@ -178,7 +178,7 @@ public class Calinea {
      * @return width in pixels
      */
     public static double measure(Component component) {
-        return layoutContext().componentMeasurer().measure(component);
+        return defaultLayoutContext().componentMeasurer().measure(component);
     }
     
     /**
@@ -202,7 +202,7 @@ public class Calinea {
      * @return segmentation result containing the segments
      */
     public static SegmentationResult split(Component component, int maxWidth) {
-        return layoutContext().splitter().split(component, maxWidth);
+        return defaultLayoutContext().splitter().split(component, maxWidth);
     }
     
     /**
@@ -224,7 +224,11 @@ public class Calinea {
             componentWidth = componentWidth * repeatCount;
         }
 
-        return Calinea.center(component, width);
+        return Calinea.layout(component)
+            .width(width)
+            .align(Alignment.CENTER)
+            .fillLines(repeatToFill) // If repeating, fill the line completely
+            .build();
     }
 
     /**

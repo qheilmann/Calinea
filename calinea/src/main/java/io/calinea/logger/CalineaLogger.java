@@ -29,6 +29,20 @@ public interface CalineaLogger {
 		return withHeader("[" + Calinea.LIBRARY_NAME + "] ", bindToMethods(logger::info, logger::warn, logger::error, logger::error));
 	}
 
+	static CalineaLogger fromPrintStream(java.io.PrintStream printStream) {
+		return withHeader("[" + Calinea.LIBRARY_NAME + "] ", bindToMethods(
+			msg -> printStream.println("[INFO] " + msg),
+			msg -> printStream.println("[WARNING] " + msg),
+			msg -> printStream.println("[SEVERE] " + msg),
+			(msg, ex) -> {
+				printStream.println("[SEVERE] " + msg);
+				if (ex != null) {
+					ex.printStackTrace(printStream);
+				}
+			}
+		));
+	}
+
 	static CalineaLogger silent() {
 		return bindToMethods(msg -> {}, msg -> {}, msg -> {}, (msg, ex) -> {});
 	}

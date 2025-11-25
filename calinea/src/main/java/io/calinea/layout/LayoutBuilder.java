@@ -185,7 +185,7 @@ public class LayoutBuilder {
         // Use the provided context or default to Calinea's layout context
         LayoutContext ctx = this.context;
         if (ctx == null) {
-            ctx = Calinea.layoutContext();
+            ctx = Calinea.defaultLayoutContext();
         }
 
         // Resolve the component if a sender is provided

@@ -8,14 +8,14 @@ import java.util.List;
 
 import io.calinea.segmentation.SegmentationResult;
 import io.calinea.segmentation.SegmentationState;
-import io.calinea.segmentation.measurer.ComponentMeasurer;
+import io.calinea.segmentation.measurer.IComponentMeasurer;
 
 public class Splitter {
 
     private final TextTokenizer tokenizer;
-    private final ComponentMeasurer measurer;
+    private final IComponentMeasurer measurer;
 
-    public Splitter(TextTokenizer tokenizer, ComponentMeasurer measurer) {
+    public Splitter(TextTokenizer tokenizer, IComponentMeasurer measurer) {
         this.tokenizer = tokenizer;
         this.measurer = measurer;
     }

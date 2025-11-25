@@ -24,7 +24,7 @@ import net.kyori.adventure.text.format.TextDecoration;
  * Main ComponentMeasurer that delegates to specific component measurers
  * based on the component type using polymorphism.
  */
-public class ComponentMeasurer {
+public class ComponentMeasurer implements IComponentMeasurer{
     private final List<IComponentLayoutHandler<?>> measurers;
 
     private TextComponentHandler textComponentMeasurer;
