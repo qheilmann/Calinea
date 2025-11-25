@@ -8,7 +8,6 @@ import net.kyori.adventure.text.ComponentLike;
  * Resolves Adventure components of type T into another Components using context C.
  *
  * @param <T> The type of ComponentLike to resolve
- * @param <C> The type of context used during resolution
  */
 public interface IClientComponentResolver<T extends ComponentLike> {
     /**

@@ -28,7 +28,6 @@ import net.kyori.adventure.text.TextComponent;
  *     .padding(10)
  *     .build();
  * </pre>
- * </p>
  */
 public class LayoutBuilder {
     private final Component root;
@@ -176,7 +175,6 @@ public class LayoutBuilder {
      *     <li>Applying alignment and padding to each line.</li>
      *     <li>Joining lines with newlines.</li>
      * </ol>
-     * </p>
      *
      * @return the laid-out component
      */

@@ -1,5 +1,7 @@
 # Calinea
 
+[![](https://jitpack.io/v/qheilmann/Calinea.svg)](https://jitpack.io/#qheilmann/Calinea)
+
 A server-side Java library designed for modifying [Adventure](https://docs.advntr.dev/) components, enabling alignment, precise measurement and layout management. Whether you need to center text in a GUI, split long messages, or create complex layouts with most component types, styles, fonts or custom characters, Calinea provides the tools to ensure pixel-perfect rendering.
 
 ## Features
@@ -17,15 +19,15 @@ A server-side Java library designed for modifying [Adventure](https://docs.advnt
 
 ### Gradle
 ```kotlin
-implementation("io.calinea:calinea:0.5.0-SNAPSHOT")
+implementation 'com.github.qheilmann:Calinea:v0.5.0'
 ```
 
 ### Maven
 ```xml
 <dependency>
-    <groupId>io.calinea</groupId>
-    <artifactId>calinea</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <groupId>com.github.qheilmann</groupId>
+    <artifactId>Calinea</artifactId>
+    <version>v0.5.0</version>
 </dependency>
 ```
 
