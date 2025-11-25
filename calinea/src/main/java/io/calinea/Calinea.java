@@ -184,6 +184,17 @@ public class Calinea {
             .padding(0, rightPadding)
             .build();
     }
+
+    /**
+     * Resolves a component in the given context.
+     * 
+     * @param component the component to resolve
+     * @param entity the entity for both context and scoreboard resolution
+     * @return resolved component
+     */
+    public static Component resolve(Component component, Entity entity) {
+        return resolve(component, entity, entity);
+    }
     
     /**
      * Resolves a component in the given context.
