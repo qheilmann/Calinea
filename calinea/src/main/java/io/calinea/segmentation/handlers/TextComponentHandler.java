@@ -92,7 +92,8 @@ public class TextComponentHandler implements IComponentLayoutHandler<TextCompone
         if (isBold) {
             width += 1; // Bold duplicates the glyph 1px to the right, increasing width by 1px
         }
-        width += 1; // 1px letter spacing
+
+        // Some types of characters have the 1px spacing baked into the font width by the generator.
         return width;
     }
 }

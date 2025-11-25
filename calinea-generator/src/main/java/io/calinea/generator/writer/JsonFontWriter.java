@@ -82,7 +82,12 @@ public class JsonFontWriter {
         // Metadata
         root.put("version", JsonFontFormat.CURRENT_VERSION);
         root.put("format", JsonFontFormat.FORMAT);
-        root.put("description", "Character width mappings for Minecraft fonts. Use https://r12a.github.io/app-conversion/ (JS/Java/C category, ES6 disabled) to convert between \\u format and visual representation.");
+
+        String description = "Character width mappings for Minecraft fonts. "
+            + "To convert between Unicode escape sequences (\\uXXXX) and visible characters, "
+            + "use https://r12a.github.io/app-conversion/ (select 'JS/Java/C' and disable ES6). "
+            + "Bitmap fonts already include 1px padding for inter-letter spacing.";
+        root.put("description", description);
         
         // Pack default width
         jsonPutNumber(root, "default_width", packInfo.getDefaultWidth());

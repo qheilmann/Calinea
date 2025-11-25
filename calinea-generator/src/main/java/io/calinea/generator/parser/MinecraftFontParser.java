@@ -297,8 +297,11 @@ public class MinecraftFontParser {
                 // Calculate the actual width by finding the rightmost non-transparent pixel
                 int actualWidth = calculateGlyphWidth(image, colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
                 
+                // Minecraft adds 1px spacing to bitmap fonts
+                int widthWithSpacing = actualWidth + 1;
+
                 // Set the width in the font info
-                fontInfo.setWidth(codepoint, actualWidth);
+                fontInfo.setWidth(codepoint, widthWithSpacing);
             }
         }
     }
