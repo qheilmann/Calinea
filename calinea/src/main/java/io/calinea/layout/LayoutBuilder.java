@@ -235,7 +235,7 @@ public class LayoutBuilder {
             }
             
             // Add the line content
-            finalComponent.append(line.component());
+            finalComponent.append(line);
 
             // Add right padding / fill space
             if (fillLines) {

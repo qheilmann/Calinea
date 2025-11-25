@@ -1,8 +1,11 @@
 package io.calinea.segmentation;
 
-import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
-public class ComponentLine {
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+
+public class ComponentLine implements ComponentLike {
 
     private final Component component;
     private final Double width;
@@ -18,5 +21,10 @@ public class ComponentLine {
 
     public double width() {
         return width;
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return component();
     }
 }
