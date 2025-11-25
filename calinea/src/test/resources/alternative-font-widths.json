@@ -1,0 +1,16 @@
+{
+  "version" : 1,
+  "format" : "calinea-font-widths",
+  "default_width" : 5,
+  "fonts" : [
+    {
+      "fontKey" : "minecraft:default",
+      "widths" : {
+        "A" : 5,
+        "B" : 10,
+        "C" : 15,
+        "-" : 2
+      }
+    }
+  ]
+}
