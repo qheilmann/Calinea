@@ -8,6 +8,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 
+import io.calinea.segmentation.measurer.ComponentMeasurer;
+
 public class SegmentationState {
 
     /** The stack of styles applied (merged with the top one) on the pointed component **/
@@ -88,6 +90,48 @@ public class SegmentationState {
 
     public double currentWidth() {
         return currentLineWidth;
+    }
+
+    public void trimTrailingSpace(ComponentMeasurer measurer) {
+        // 1. Check pendingText
+        if (pendingText.length() > 0) {
+            if (pendingText.charAt(pendingText.length() - 1) == ' ') {
+                pendingText.deleteCharAt(pendingText.length() - 1);
+                
+                Style style = pendingStyle != null ? pendingStyle : Style.empty();
+                double spaceWidth = measurer.measureText(" ", style);
+                currentLineWidth -= spaceWidth;
+                
+                // Recursively check again
+                trimTrailingSpace(measurer);
+            }
+        } else if (!currentLineComponents.isEmpty()) {
+            // 2. Check last component in currentLineComponents
+            int lastIndex = currentLineComponents.size() - 1;
+            Component last = currentLineComponents.get(lastIndex);
+            
+            if (last instanceof TextComponent tc) {
+                String content = tc.content();
+                if (content.endsWith(" ")) {
+                    // Remove the component
+                    currentLineComponents.remove(lastIndex);
+                    
+                    // Measure space width
+                    double spaceWidth = measurer.measureText(" ", tc.style());
+                    currentLineWidth -= spaceWidth;
+                    
+                    // Update content
+                    String newContent = content.substring(0, content.length() - 1);
+                    if (!newContent.isEmpty()) {
+                        // Add back modified component
+                        currentLineComponents.add(tc.content(newContent));
+                    }
+                    
+                    // Recursively check again
+                    trimTrailingSpace(measurer);
+                }
+            }
+        }
     }
 
     public List<ComponentLine> finish() {

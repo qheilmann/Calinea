@@ -83,6 +83,7 @@ public class Splitter {
         } else {
             // If current line is not empty, wrap to new line first.
             if (state.currentWidth() > 0) {
+                state.trimTrailingSpace(measurer);
                 state.newLine();
             }
             // Append to new line (even if it overflows)
@@ -104,6 +105,7 @@ public class Splitter {
             String token = tokens.get(i);
             
             if (token.equals("\n")) {
+                state.trimTrailingSpace(measurer);
                 state.newLine();
                 continue;
             }
@@ -118,6 +120,7 @@ public class Splitter {
                 
                 // If current line is not empty, wrap to new line first.
                 if (state.currentWidth() > 0) {
+                    state.trimTrailingSpace(measurer);
                     state.newLine();
                 }
                 
