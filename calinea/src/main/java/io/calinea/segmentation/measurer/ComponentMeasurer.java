@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
+import io.calinea.segmentation.handlers.BlockNBTComponentHandler;
 import io.calinea.segmentation.handlers.EntityNBTComponentHandler;
 import io.calinea.segmentation.handlers.IComponentLayoutHandler;
 import io.calinea.segmentation.handlers.KeybindComponentHandler;
@@ -36,6 +37,7 @@ public class ComponentMeasurer implements IComponentMeasurer{
             new SelectorComponentHandler(config),
             new ScoreComponentHandler(),
             new ObjectComponentHandler(config),
+            new BlockNBTComponentHandler(),
             new EntityNBTComponentHandler(),
             new StorageNBTComponentHandler(),
             new KeybindComponentHandler(config),
