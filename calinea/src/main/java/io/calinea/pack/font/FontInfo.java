@@ -1,10 +1,11 @@
-package io.calinea.font;
+package io.calinea.pack.font;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.calinea.pack.PackInfo;
 import net.kyori.adventure.key.Key;
 
 /**

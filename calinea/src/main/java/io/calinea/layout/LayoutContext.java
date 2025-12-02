@@ -1,6 +1,6 @@
 package io.calinea.layout;
 
-import io.calinea.font.PackInfo;
+import io.calinea.pack.PackInfo;
 import io.calinea.resolver.ComponentResolver;
 import io.calinea.resolver.IComponentResolver;
 import io.calinea.segmentation.measurer.ComponentMeasurer;

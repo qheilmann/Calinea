@@ -18,10 +18,10 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.key.Key;
-
-import io.calinea.font.PackInfo;
+import io.calinea.config.CalineaGeneratorDefault;
 import io.calinea.layout.Alignment;
 import io.calinea.layout.LayoutContext;
+import io.calinea.pack.PackInfo;
 import io.calinea.resolver.ComponentResolver;
 import io.calinea.segmentation.SegmentationResult;
 import io.calinea.segmentation.splitter.TextTokenizer;
@@ -261,14 +261,14 @@ class CalineaTest {
         @Test
         void testDifferentContext() {
 
-            Path fontPath = Paths.get("calinea/src/test/resources/alternative-font-widths.json");
+            Path fontPath = Paths.get("calinea/src/test/resources/alternative-" + CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME);
             if (!fontPath.toFile().exists()) {
                 // Fallback for when running in some IDE configurations or CI
-                fontPath = Paths.get("src/test/resources/alternative-font-widths.json");
+                fontPath = Paths.get("src/test/resources/alternative-" + CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME);
             }
             
             if (!fontPath.toFile().exists()) {
-                throw new RuntimeException("Could not find alternative-font-widths at " + fontPath.toAbsolutePath());
+                throw new RuntimeException("Could not find alternative-" + CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME + " at " + fontPath.toAbsolutePath());
             }
 
             // Create a new context manually

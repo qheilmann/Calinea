@@ -1,4 +1,4 @@
-package io.calinea.font;
+package io.calinea.pack.font;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,26 +14,27 @@ import org.jspecify.annotations.Nullable;
 import io.calinea.Calinea;
 import net.kyori.adventure.key.Key;
 
-public class PackInfo {
+public class FontsInfo {
 
     public static final double DEFAULT_CHAR_WIDTH = 5.0;
 
     private Map<Key, FontInfo> fonts;
+
     private final double defaultWidth;
 
-    public PackInfo() {
+    public FontsInfo() {
         this(List.of(), DEFAULT_CHAR_WIDTH);
     }
 
-    public PackInfo(SequencedCollection<FontInfo> fonts) {
+    public FontsInfo(SequencedCollection<FontInfo> fonts) {
         this(fonts, DEFAULT_CHAR_WIDTH);
     }
 
-    public PackInfo(double defaultWidth) {
+    public FontsInfo(double defaultWidth) {
         this(List.of(), defaultWidth);
     }
 
-    public PackInfo(SequencedCollection<FontInfo> fonts, double defaultWidth) {
+    public FontsInfo(SequencedCollection<FontInfo> fonts, double defaultWidth) {
         this.defaultWidth = defaultWidth;
         this.fonts = new LinkedHashMap<>();
 
@@ -42,8 +43,15 @@ public class PackInfo {
         }
     }
 
-    public PackInfo addFont(FontInfo fontInfo) {
+    public FontsInfo addFont(FontInfo fontInfo) {
         this.fonts.put(fontInfo.getFontKey(), fontInfo);
+        return this;
+    }
+
+    public FontsInfo addAll(SequencedCollection<FontInfo> fontInfos) {
+        for (FontInfo fontInfo : fontInfos) {
+            this.fonts.put(fontInfo.getFontKey(), fontInfo);
+        }
         return this;
     }
 

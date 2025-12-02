@@ -41,12 +41,12 @@ To enable accurate text measurement, provide a JSON file containing character wi
 ### Initialize Calinea
 Can be used inside `JavaPlugin#onLoad()`
 ```java
-// Get the path to the font widths JSON file
-Path fontInfoPath = getDataFolder().toPath().resolve("font-widths.json");
+// Get the path to the calinea config JSON file
+Path calineaConfigPath = getDataFolder().toPath().resolve("calinea-config.json");
 
 // Create Calinea configuration
 CalineaConfig config = new CalineaConfig()
-    .fontInfoPath(fontInfoPath)
+    .calineaConfigPath(calineaConfigPath)
     .logger(CalineaLogger.fromSlf4jLogger(LOGGER));
 
 // Load Calinea with the configuration

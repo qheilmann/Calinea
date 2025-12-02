@@ -2,11 +2,11 @@ package io.calinea.config;
 
 import java.nio.file.Path;
 
-import io.calinea.font.PackInfo;
 import io.calinea.logger.CalineaLogger;
+import io.calinea.pack.PackInfo;
 
 public class CalineaConfig {
-    private Path fontInfoPath = Path.of("./font-widths.json");
+    private Path calineaConfigPath = Path.of("./", CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME);
     private CalineaLogger logger = CalineaLogger.silent();
     private boolean warnOnMissingWidths = true;
     private boolean warnOnMissingFonts = true;
@@ -14,15 +14,15 @@ public class CalineaConfig {
     private boolean warnOnUnforcedClientComponents = true;
     private boolean verboseLogging = false;
 
-    public Path fontInfoPath() {
-        return fontInfoPath;
+    public Path calineaConfigPath() {
+        return calineaConfigPath;
     }
 
     /**
-     * Sets the path to the font widths JSON file.
+     * Sets the path to the config JSON file.
      */
-    public CalineaConfig fontInfoPath(Path fontInfoPath) {
-        this.fontInfoPath = fontInfoPath;
+    public CalineaConfig calineaConfigPath(Path calineaConfigPath) {
+        this.calineaConfigPath = calineaConfigPath;
         return this;
     }
 
@@ -43,7 +43,7 @@ public class CalineaConfig {
     }
 
     /**
-     * Sets whether to warn when a character is missing from the font widths data.
+     * Sets whether to warn when a character is missing from the calinea config data.
      * In all case when a character is missing, it will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
      */
     public CalineaConfig warnOnMissingWidths(boolean warnOnMissingFontWidths) {
@@ -56,8 +56,8 @@ public class CalineaConfig {
     }
 
     /**
-     * Sets whether to warn when a font is missing from the font widths data.
-     * In all case when a font is missing, all its characters will default to a width of {@link PackInfo#DEFAULT_CHAR_WIDTH}.
+     * Sets whether to warn when a font is missing from the calinea config data.
+     * In all case when a font is missing, the default character width will be used.
      */
     public CalineaConfig warnOnMissingFonts(boolean warnOnMissingFonts) {
         this.warnOnMissingFonts = warnOnMissingFonts;

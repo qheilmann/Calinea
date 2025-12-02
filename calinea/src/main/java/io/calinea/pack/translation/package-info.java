@@ -1,4 +1,4 @@
 @NullMarked
-package io.calinea.font.reader;
+package io.calinea.pack.translation;
 
 import org.jspecify.annotations.NullMarked;
