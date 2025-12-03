@@ -20,7 +20,7 @@ A server-side Java library designed for modifying [Adventure](https://docs.advnt
 
 ### Gradle
 ```kotlin
-implementation 'com.github.qheilmann:Calinea:v0.5.0'
+implementation 'com.github.qheilmann:Calinea:v0.6.0'
 ```
 
 ### Maven
@@ -28,7 +28,7 @@ implementation 'com.github.qheilmann:Calinea:v0.5.0'
 <dependency>
     <groupId>com.github.qheilmann</groupId>
     <artifactId>Calinea</artifactId>
-    <version>v0.5.0</version>
+    <version>v0.6.0</version>
 </dependency>
 ```
 
