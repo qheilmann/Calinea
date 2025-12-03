@@ -1,5 +1,7 @@
 package io.calinea.resolver.Client;
 
+import java.util.Locale;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
@@ -16,7 +18,7 @@ public interface IClientComponentResolver<T extends ComponentLike> {
      * @param component The component to resolve
      * @return The resolved Component
      */
-    Component resolve(T component);
+    Component resolve(T component, Locale locale);
 
     /**
      * Checks if this resolver can handle the given component.

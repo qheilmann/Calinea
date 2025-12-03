@@ -104,7 +104,7 @@ public class LayoutContext {
         public Builder(PackInfo packInfo) {
             this.packInfo = packInfo;
             this.textTokenizer = new TextTokenizer.Default();
-            this.componentResolver = new ComponentResolver();
+            this.componentResolver = new ComponentResolver(packInfo);
             this.componentMeasurer = new ComponentMeasurer(new ComponentMeasurerConfig(packInfo));
         }
 

@@ -280,7 +280,7 @@ class CalineaTest {
                         return List.of(text.split("(?<=-)|(?=-)"));
                     }
                 })
-                .componentResolver(new ComponentResolver())
+                .componentResolver(new ComponentResolver(packInfo))
                 .build();
                 
             // Use the context in a builder

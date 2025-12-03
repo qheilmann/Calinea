@@ -99,12 +99,12 @@ public class TranslationParser implements IResourceParser<TranslationsInfo> {
     }
     
     /**
-     * Extracts the language code from a file path.
+     * Extracts the lowercased language code from a file path.
      * Example: en_us.json -> en_us
      */
     private String extractLanguageCode(Path langFile) {
         String filename = langFile.getFileName().toString();
-        return filename.substring(0, filename.length() - JSON_EXTENSION.length());
+        return filename.substring(0, filename.length() - JSON_EXTENSION.length()).toLowerCase();
     }
 
     @Override

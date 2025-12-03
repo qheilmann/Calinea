@@ -1,22 +1,28 @@
 package io.calinea.resolver.Client;
 
 import java.util.List;
+import java.util.Locale;
 
+import io.calinea.pack.PackInfo;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
 public class ForcedClientComponentResolver {
 
-    private static final List<IClientComponentResolver<?>> clientResolvers = List.of(
-        new KeyBindComponentResolver(),
-        new TranslatableComponentResolver()
-    );
+    private static List<IClientComponentResolver<?>> clientResolvers;
+
+    public ForcedClientComponentResolver(PackInfo packInfo) {
+        clientResolvers = List.of(
+                new KeyBindComponentResolver(),
+                new TranslatableComponentResolver(packInfo)
+        );
+    }
 
     // public Component resolve(ComponentLike component) {
     //    return resolve(component, null);
     // }
 
-    public Component resolve(ComponentLike componentLike) {
+    public Component resolve(ComponentLike componentLike, Locale locale) {
         if (componentLike == Component.empty()) {
             return Component.empty();
         }
@@ -30,13 +36,13 @@ public class ForcedClientComponentResolver {
                 // Resolve root
                 @SuppressWarnings("unchecked")
                 IClientComponentResolver<Component> typedResolver = (IClientComponentResolver<Component>) resolver;
-                component = typedResolver.resolve(component);
+                component = typedResolver.resolve(component, locale);
             }
         }
                 
         // Resolve children
         List<Component> resolvedChildren = component.children().stream()
-            .map(child -> resolve(child))
+            .map(child -> resolve(child, locale))
             .toList();
         
         return component.children(resolvedChildren);

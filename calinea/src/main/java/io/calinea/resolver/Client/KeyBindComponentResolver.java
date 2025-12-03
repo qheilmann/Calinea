@@ -1,5 +1,7 @@
 package io.calinea.resolver.Client;
 
+import java.util.Locale;
+
 import io.calinea.Calinea;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.KeybindComponent;
@@ -11,7 +13,7 @@ public class KeyBindComponentResolver implements IClientComponentResolver<Keybin
     }
     
     @Override
-    public Component resolve(KeybindComponent component) {
+    public Component resolve(KeybindComponent component, Locale locale) {
 
         if (Calinea.config().warnOnUnforcedClientComponents()) {
             Calinea.logger().info("KeybindComponent resolution is not fully supported yet, and can't be customized, it will be replaced with the keybind identifier: " + component.keybind());
