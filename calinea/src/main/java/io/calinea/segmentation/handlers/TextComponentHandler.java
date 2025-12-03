@@ -1,7 +1,7 @@
 package io.calinea.segmentation.handlers;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import io.calinea.font.PackInfo;
+import io.calinea.pack.font.FontsInfo;
 import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -87,8 +87,8 @@ public class TextComponentHandler implements IComponentLayoutHandler<TextCompone
      * @return width in pixels
      */
     private double measureCodepointWidth(int codepoint, Key fontKey, boolean isBold) {
-        PackInfo packInfo = config.getPackInfo();
-        double width = packInfo.getWidth(fontKey, codepoint);
+        FontsInfo fontsInfo = config.getPackInfo().fontsInfo();
+        double width = fontsInfo.getWidth(fontKey, codepoint);
         if (isBold) {
             width += 1; // Bold duplicates the glyph 1px to the right, increasing width by 1px
         }

@@ -135,7 +135,7 @@ public final class CalineaCommand {
                     //Format and send message
                     Component result = Component.text().style(Style.style(NamedTextColor.YELLOW))
                         .append(Component.text("Width of '"))
-                        .append(component.hoverEvent(Component.text(component.toString()))) // Show the component and its content on hover
+                        .append(component.applyFallbackStyle(NamedTextColor.WHITE).hoverEvent(Component.text(component.toString()))) // Show the component and its content on hover
                         .append(Component.text("': "))
                         .append(Component.text(String.valueOf(width), Style.style(TextDecoration.BOLD)))
                         .append(Component.text(" pixels"))
@@ -242,7 +242,7 @@ public final class CalineaCommand {
                     sender.sendMessage("Reloading calinea configuration ...");
 
                     CompletableFuture.runAsync(() -> {
-                        Calinea.reloadFonts();
+                        Calinea.reloadPackInfo();
                     })
                     .thenAccept(aVoid -> {
                         sender.sendMessage(Component.text("Calinea configuration reloaded", NamedTextColor.GREEN));

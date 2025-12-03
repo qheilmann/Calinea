@@ -1,4 +1,4 @@
-package io.calinea.font;
+package io.calinea.pack.font;
 
 /**
  * Wrapper class to distinguish between valid widths (including negative) and error states.

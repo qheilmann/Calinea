@@ -8,12 +8,12 @@ import org.bukkit.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
 import io.calinea.config.CalineaConfig;
-import io.calinea.font.PackInfo;
-import io.calinea.font.reader.JsonFontReader;
 import io.calinea.layout.Alignment;
 import io.calinea.layout.LayoutBuilder;
 import io.calinea.layout.LayoutContext;
 import io.calinea.logger.CalineaLogger;
+import io.calinea.pack.PackInfo;
+import io.calinea.pack.reader.JsonPackReader;
 import io.calinea.segmentation.SegmentationResult;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -54,7 +54,7 @@ public class Calinea {
      */
     public static void onLoad(CalineaConfig config) {
         Calinea.config = config;
-        reloadFonts();
+        reloadPackInfo();
     }
 
     /**
@@ -90,15 +90,15 @@ public class Calinea {
         return defaultLayoutContext;
     }
 
-    public static void reloadFonts() {
+    public static void reloadPackInfo() {
 
-        Path fontInfoPath = config().fontInfoPath();
+        Path calineaConfigPath = config().calineaConfigPath();
 
         try {
-            packInfo = createPackInfo(fontInfoPath);
+            packInfo = createPackInfo(calineaConfigPath);
             defaultLayoutContext = new LayoutContext.Builder(packInfo).build();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
+            throw new RuntimeException("Failed to load calinea config from " + calineaConfigPath.toAbsolutePath(), e);
         }
     }
 
@@ -287,13 +287,13 @@ public class Calinea {
      * @param fontInfoPath the path to the font info JSON file
      * @return the created PackInfo
      */
-    public static PackInfo createPackInfo(Path fontInfoPath) {
-        JsonFontReader reader = new JsonFontReader();
+    public static PackInfo createPackInfo(Path packInfoPath) {
+        JsonPackReader packReader = new JsonPackReader();
 
         try {
-            return reader.readFonts(fontInfoPath);
+            return packReader.read(packInfoPath);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load font info from " + fontInfoPath, e);
+            throw new RuntimeException("Failed to load pack info from " + packInfoPath.toAbsolutePath(), e);
         }
     }
 

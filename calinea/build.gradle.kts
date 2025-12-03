@@ -36,6 +36,7 @@ dependencies {
     
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
+    testImplementation(libs.paper.api)
 }
 
 tasks.named<Test>("test") {

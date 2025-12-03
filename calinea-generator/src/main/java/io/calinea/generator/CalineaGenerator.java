@@ -2,22 +2,20 @@ package io.calinea.generator;
 
 import org.jspecify.annotations.Nullable;
 
-import io.calinea.font.PackInfo;
-import io.calinea.generator.parser.MinecraftFontParser;
-import io.calinea.generator.writer.JsonFontWriter;
+import io.calinea.config.CalineaGeneratorDefault;
+import io.calinea.generator.parser.MinecraftPackParser;
+import io.calinea.generator.writer.JsonPackWriter;
+import io.calinea.pack.PackInfo;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Calinea Generator - Font Width Atlas Generator
+ * Calinea Generator - Calinea config generator
  * 
- * Tool for generating width atlases for fonts inside a Minecraft resource pack.
+ * Tool for generating Calinea config files from Minecraft resource packs.
  */
 public class CalineaGenerator {
-    
-    private static final String DEFAULT_OUTPUT_DIR = "./calinea-output";
-    private static final String OUTPUT_FILENAME = "font-widths.json";
     
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -27,10 +25,10 @@ public class CalineaGenerator {
         
         try {
             String resourcePackPath = args[0];
-            String outputPath = args.length > 1 ? args[1] : DEFAULT_OUTPUT_DIR;
+            String outputPath = args.length > 1 ? args[1] :  CalineaGeneratorDefault.DEFAULT_OUTPUT_DIR;
             
             printVersion();
-            generateFontWidths(resourcePackPath, outputPath);
+            generateCalineaConfig(resourcePackPath, outputPath);
             
         } catch (Exception e) {
             handleError(e);
@@ -48,7 +46,7 @@ public class CalineaGenerator {
         System.out.println("  character width mappings for all fonts.");
         System.out.println("\nExamples:");
         System.out.println("  java -jar calinea-generator.jar ./my-resource-pack ./output");
-        System.out.println("  # Creates: ./output/" + OUTPUT_FILENAME);
+        System.out.println("  # Creates: ./output/" + CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME);
         System.out.println("  java -jar calinea-generator.jar ./my-resource-pack ./output/custom-name.json");
         System.out.println("  # Creates: ./output/custom-name.json");
     }
@@ -87,27 +85,29 @@ public class CalineaGenerator {
         }
         
         // Otherwise, treat it as a directory and append the default filename
-        return path.resolve(OUTPUT_FILENAME);
+        return path.resolve(CalineaGeneratorDefault.DEFAULT_OUTPUT_FILENAME);
     }
     
     /**
-     * Generates the font width mappings for the given resource pack.
+     * Generates the Calinea config JSON file from the resource pack.
      * 
      * @param resourcePackPath the path to the Minecraft resource pack
      * @param outputPath the output path (directory or full file path)
      * @throws Exception if an error occurs during generation
      */
-    private static void generateFontWidths(String resourcePackPath, String outputPath) throws Exception {
+    private static void generateCalineaConfig(String resourcePackPath, String outputPath) throws Exception {
         System.out.println("\nAnalyzing resource pack: " + resourcePackPath);
         
         Path resourcePack = Paths.get(resourcePackPath);
         Path outputFilePath = resolveOutputPath(outputPath);
         
-        PackInfo packInfo = parseFonts(resourcePack);
-        validateFonts(packInfo);
-        writeFontWidths(packInfo, outputFilePath);
+        // Parse the resource pack
+        PackInfo packInfo = parsePackInfo(resourcePack);
+
+        // Write the output JSON file
+        writePackInfo(packInfo, outputFilePath);
         
-        printSuccess(outputFilePath, packInfo.getFonts().size());
+        System.out.println("\nGeneration complete! File saved to: " + outputFilePath.toAbsolutePath());
     }
     
     /**
@@ -117,49 +117,25 @@ public class CalineaGenerator {
      * @return PackInfo containing parsed font information
      * @throws Exception if parsing fails
      */
-    private static PackInfo parseFonts(Path resourcePack) throws Exception {
-        MinecraftFontParser parser = new MinecraftFontParser();
-        return parser.parseResourcePack(resourcePack);
+    private static PackInfo parsePackInfo(Path resourcePack) throws Exception {
+        MinecraftPackParser parser = new MinecraftPackParser();
+        PackInfo packInfo = parser.parseResourcePack(resourcePack);
+        parser.printStatistics(packInfo);
+        return packInfo;
     }
     
     /**
-     * Validates that fonts were found and prints font information.
-     * 
-     * @param packInfo the PackInfo to validate
-     */
-    private static void validateFonts(PackInfo packInfo) {
-        if (packInfo.getFonts().isEmpty()) {
-            System.out.println("No fonts found in resource pack!");
-            return;
-        }
-        
-        System.out.println("Found " + packInfo.getFonts().size() + " fonts:");
-        packInfo.getFonts().values().forEach(font -> System.out.println("  - " + font));
-    }
-    
-    /**
-     * Writes the font width mappings to a JSON file.
+     * Writes all calinea config to a JSON file.
      * 
      * @param packInfo the PackInfo to write
      * @param outputFilePath the full path to the output file
      * @throws Exception if writing fails
      */
-    private static void writeFontWidths(PackInfo packInfo, Path outputFilePath) throws Exception {
-        System.out.println("\nGenerating font width file...");
+    private static void writePackInfo(PackInfo packInfo, Path outputFilePath) throws Exception {
+        System.out.println("\nGenerating calinea config file...");
         
-        JsonFontWriter writer = new JsonFontWriter();
-        writer.writePackInfo(packInfo, outputFilePath);
-    }
-    
-    /**
-     * Prints success message with generation details.
-     * 
-     * @param outputFilePath the full path to the output file
-     * @param fontCount the number of fonts processed
-     */
-    private static void printSuccess(Path outputFilePath, int fontCount) {
-        System.out.println("\nGeneration complete! File saved to: " + outputFilePath.toAbsolutePath());
-        System.out.println("This JSON file contains width mappings for all " + fontCount + " fonts");
+        JsonPackWriter writer = new JsonPackWriter(packInfo);
+        writer.write(outputFilePath);
     }
     
     /**

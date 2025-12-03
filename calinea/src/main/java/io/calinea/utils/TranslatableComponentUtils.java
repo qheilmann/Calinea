@@ -32,10 +32,22 @@ public class TranslatableComponentUtils {
      */
     public static TextComponent flattenInEnglish(TranslatableComponent component) {
         String translation = extractEnglishTranslation(component);
+        return buildFromPattern(component, translation);
+    }
+    
+    /**
+     * Builds a TextComponent from a translation pattern, using the original component's arguments, style, and children.
+     * If there are insufficient arguments, {@link #DUMMY_PLACEHOLDER_COMPONENT} will be used for ALL arguments.
+     *
+     * @param original The original TranslatableComponent (for arguments, style, children).
+     * @param translation The translation pattern with %s placeholders.
+     * @return A TextComponent with the translation and arguments inserted.
+     */
+    public static TextComponent buildFromPattern(TranslatableComponent original, String translation) {
 
         String[] parts = translation.split("%s");
         int numberOfPlaceholders = parts.length - 1;
-        List<Component> arguments = component.arguments().stream()
+        List<Component> arguments = original.arguments().stream()
             .map(c -> c.asComponent())
             .toList();
         
@@ -56,10 +68,10 @@ public class TranslatableComponentUtils {
         translationPart = translationPart.append(Component.text(parts[parts.length - 1]));
 
         // Then append the child (in a separate node)
-        TextComponent childrenPart = Component.empty().append(component.children());
+        TextComponent childrenPart = Component.empty().append(original.children());
 
         // Merge both and add the style of the original component
-        TextComponent result = Component.empty().style(component.style())
+        TextComponent result = Component.empty().style(original.style())
             .append(translationPart)
             .append(childrenPart);
 

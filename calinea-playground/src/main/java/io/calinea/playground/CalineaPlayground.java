@@ -70,12 +70,12 @@ public class CalineaPlayground extends JavaPlugin {
     }
     
     private void onLoadCalinea() {
-        // Path fontInfoPath = getDataFolder().toPath().resolve("font-widths.json");
+        // Path fontInfoPath = getDataFolder().toPath().resolve("calinea-config.json");
         // TODO add a config option for this path
-        Path fontInfoPath = Path.of("D:\\dev\\Minecraft\\_project\\Calinea\\calinea-output\\font-widths.json");
+        Path calineaConfigPath = Path.of("D:\\dev\\Minecraft\\_project\\Calinea\\calinea-output\\calinea-config.json");
 
         CalineaConfig config = new CalineaConfig()
-            .fontInfoPath(fontInfoPath)
+            .calineaConfigPath(calineaConfigPath)
             .logger(CalineaLogger.fromSlf4jLogger(LOGGER));
 
         Calinea.onLoad(config);
