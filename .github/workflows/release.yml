@@ -17,7 +17,9 @@ jobs:
           distribution: 'temurin'
       
       - name: Build Generator JAR
-        run: ./gradlew :calinea-generator:shadowJar
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :calinea-generator:shadowJar
       
       - name: Upload Generator to Release
         uses: softprops/action-gh-release@v1
