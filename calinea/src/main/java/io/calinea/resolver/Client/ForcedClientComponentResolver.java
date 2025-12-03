@@ -12,15 +12,14 @@ public class ForcedClientComponentResolver {
     private static List<IClientComponentResolver<?>> clientResolvers;
 
     public ForcedClientComponentResolver(PackInfo packInfo) {
+        TranslatableComponentResolver translatableResolver = new TranslatableComponentResolver(packInfo);
+        KeyBindComponentResolver keyBindResolver = new KeyBindComponentResolver(translatableResolver);
+        
         clientResolvers = List.of(
-                new KeyBindComponentResolver(),
-                new TranslatableComponentResolver(packInfo)
+            translatableResolver,
+            keyBindResolver
         );
     }
-
-    // public Component resolve(ComponentLike component) {
-    //    return resolve(component, null);
-    // }
 
     public Component resolve(ComponentLike componentLike, Locale locale) {
         if (componentLike == Component.empty()) {
