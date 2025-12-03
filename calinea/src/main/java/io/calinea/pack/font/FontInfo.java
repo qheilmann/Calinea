@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import io.calinea.pack.PackInfo;
 import net.kyori.adventure.key.Key;
 
 /**
@@ -56,7 +55,7 @@ public class FontInfo {
     
     /**
      * Gets the direct width for a specific codepoint from this font only.
-     * Does not resolve references, use {@link PackInfo#getWidth(Key, int)} for that.
+     * Does not resolve references, use {@link FontsInfo#getWidth(Key, int)} for that.
      * @return WidthResult containing the width if found, or MISSING_WIDTH status if not set.
      */
     public WidthResult getDirectWidth(int codepoint) {

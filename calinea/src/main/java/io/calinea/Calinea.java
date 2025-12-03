@@ -284,7 +284,7 @@ public class Calinea {
     /**
      * Creates PackInfo from the given font info path.
      * 
-     * @param fontInfoPath the path to the font info JSON file
+     * @param packInfoPath the path to the pack info JSON file
      * @return the created PackInfo
      */
     public static PackInfo createPackInfo(Path packInfoPath) {
