@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Parses Minecraft resource packs, coordinating different parsers for fonts, translations, keybinds, etc.
+ * Parses Minecraft resource packs, coordinating different parsers for fonts and translations.
  */
 public class MinecraftPackParser {
     
@@ -38,15 +38,12 @@ public class MinecraftPackParser {
         fontParser.validate(fonts);
         fontParser.printStatistics(fonts);
         
-        // Future: Parse translations
+        // Parse translations
         TranslationsInfo translations = translationParser.parse(resourcePackPath);
         translationParser.validate(translations);
         translationParser.printStatistics(translations);
-        
-        // Future: Parse keybinds // TODO no keybind parser but just a writer from the tranlslationInfo
-        // KeybindsInfo keybinds = keybindParser.parse(resourcePackPath);
 
-        return new PackInfo(fonts, null, translations);
+        return new PackInfo(fonts, translations);
     }
     
     /**

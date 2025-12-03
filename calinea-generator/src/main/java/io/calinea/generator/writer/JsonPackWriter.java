@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.calinea.generator.writer.sections.FontsSectionWriter;
 import io.calinea.generator.writer.sections.ISectionWriter;
-import io.calinea.generator.writer.sections.KeybindsSectionWriter;
 import io.calinea.generator.writer.sections.TranslationsSectionWriter;
 import io.calinea.pack.PackInfo;
 import io.calinea.pack.reader.JsonPackReader;
@@ -23,7 +22,7 @@ import java.util.List;
 
 /**
  * Writes Calinea data in JSON format for easier debugging and manual editing.
- * Supports multiple sections (fonts, keybinds, translations, etc.) through a modular design.
+ * Supports multiple sections (fonts, translations, etc.) through a modular design.
  * <p>
  * Usage example:
  * <pre>
@@ -50,7 +49,6 @@ public class JsonPackWriter {
         // Sections
         this.sections = new ArrayList<>();
         sections.add(new FontsSectionWriter(packInfo.fontsInfo()));
-        sections.add(new KeybindsSectionWriter(packInfo.keybindsInfo()));
         sections.add(new TranslationsSectionWriter(packInfo.translationsInfo()));
     }
     

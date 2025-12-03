@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.calinea.pack.PackInfo;
 import io.calinea.pack.font.FontsInfo;
-import io.calinea.pack.keybind.KeybindsInfo;
 import io.calinea.pack.translation.TranslationsInfo;
 
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class JsonPackReader {
      * Reads a Calinea config file and returns all parsed data.
      *
      * @param jsonFile path to the JSON config file
-     * @return PackInfo containing fonts, keybinds, and translations
+     * @return PackInfo containing fonts and translations
      * @throws IOException if reading or parsing fails
      */
     public PackInfo read(Path jsonFile) throws IOException {
@@ -70,7 +69,6 @@ public class JsonPackReader {
     private PackInfo readV1(JsonNode root) throws IOException {
         return new PackInfo(
             readSection(root, new FontsSectionReader(), new FontsInfo()),
-            readSection(root, new KeybindsSectionReader(), new KeybindsInfo()),
             readSection(root, new TranslationsSectionReader(), new TranslationsInfo())
         );
     }

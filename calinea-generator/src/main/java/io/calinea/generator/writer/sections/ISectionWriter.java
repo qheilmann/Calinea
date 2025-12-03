@@ -10,7 +10,7 @@ public interface ISectionWriter {
     /**
      * Gets the name of this section for logging purposes.
      * 
-     * @return the section name (e.g., "fonts", "keybinds", "translations")
+     * @return the section name (e.g., "fonts", "translations")
      */
     String getSectionName();
     
