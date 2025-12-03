@@ -2,7 +2,7 @@ package io.calinea.generator.parser.font.providers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.calinea.generator.parser.font.FontParserContext;
+import io.calinea.generator.parser.PackPathContext;
 import io.calinea.pack.font.FontInfo;
 
 import java.io.IOException;
@@ -27,5 +27,5 @@ public interface IProviderParser {
      * @param context the parsing context (font directory, resource pack root, etc.)
      * @throws IOException if parsing fails
      */
-    void parse(JsonNode provider, FontInfo fontInfo, FontParserContext context) throws IOException;
+    void parse(JsonNode provider, FontInfo fontInfo, PackPathContext context) throws IOException;
 }

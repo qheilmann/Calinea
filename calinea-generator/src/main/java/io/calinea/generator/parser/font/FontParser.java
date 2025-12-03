@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.calinea.generator.parser.IResourceParser;
+import io.calinea.generator.parser.PackPathContext;
 import io.calinea.generator.parser.font.providers.BitmapProviderParser;
 import io.calinea.generator.parser.font.providers.IProviderParser;
 import io.calinea.generator.parser.font.providers.ReferenceProviderParser;
@@ -132,7 +133,7 @@ public class FontParser implements IResourceParser<FontsInfo> {
         Key fontKey = resolveFontKey(fontFile);
         FontInfo fontInfo = new FontInfo(fontKey);
         
-        FontParserContext context = new FontParserContext(fontFile.getParent());
+        PackPathContext context = new PackPathContext(fontFile.getParent());
         
         @Nullable JsonNode providers = root.get("providers");
         if (providers != null && providers.isArray()) {
@@ -144,7 +145,7 @@ public class FontParser implements IResourceParser<FontsInfo> {
         return fontInfo;
     }
     
-    private void parseProvider(JsonNode provider, FontInfo fontInfo, FontParserContext context) throws IOException {
+    private void parseProvider(JsonNode provider, FontInfo fontInfo, PackPathContext context) throws IOException {
         String type = provider.get("type").asText();
         
         IProviderParser parser = providerParsers.get(type);
@@ -159,7 +160,7 @@ public class FontParser implements IResourceParser<FontsInfo> {
      * Resolves the font key from a font file path.
      */
     private Key resolveFontKey(Path fontFile) {
-        Path resourcePackRoot = FontParserContext.findResourcePackRoot(fontFile);
+        Path resourcePackRoot = PackPathContext.findResourcePackRoot(fontFile);
         Path relativePath = resourcePackRoot.relativize(fontFile);
         
         // Expected structure: assets/<namespace>/font/<optionalSubfolder>/<fontfile>.json

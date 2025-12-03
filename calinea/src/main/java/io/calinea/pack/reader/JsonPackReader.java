@@ -71,7 +71,7 @@ public class JsonPackReader {
         return new PackInfo(
             readSection(root, new FontsSectionReader(), new FontsInfo()),
             readSection(root, new KeybindsSectionReader(), new KeybindsInfo()),
-            readSection(root, new TranslationsSectionReader(), TranslationsInfo.empty())
+            readSection(root, new TranslationsSectionReader(), new TranslationsInfo())
         );
     }
     

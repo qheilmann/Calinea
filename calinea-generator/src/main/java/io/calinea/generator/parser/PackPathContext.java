@@ -1,4 +1,4 @@
-package io.calinea.generator.parser.font;
+package io.calinea.generator.parser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,12 +6,12 @@ import java.nio.file.Path;
 /**
  * Context information for provider parsing, including paths and resource pack structure.
  */
-public class FontParserContext {
+public class PackPathContext {
     
     private final Path fontDir;
     private final Path resourcePackRoot;
     
-    public FontParserContext(Path fontDir) {
+    public PackPathContext(Path fontDir) {
         this.fontDir = fontDir;
         this.resourcePackRoot = findResourcePackRoot(fontDir);
     }

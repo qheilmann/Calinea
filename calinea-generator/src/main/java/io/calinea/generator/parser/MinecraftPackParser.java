@@ -1,8 +1,10 @@
 package io.calinea.generator.parser;
 
 import io.calinea.generator.parser.font.FontParser;
+import io.calinea.generator.parser.translation.TranslationParser;
 import io.calinea.pack.PackInfo;
 import io.calinea.pack.font.FontsInfo;
+import io.calinea.pack.translation.TranslationsInfo;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,11 +16,11 @@ import java.nio.file.Path;
 public class MinecraftPackParser {
     
     private final FontParser fontParser;
-    // Future: private final TranslationParser translationParser;
-    // Future: private final KeybindParser keybindParser;
+    private final TranslationParser translationParser;
     
     public MinecraftPackParser() {
         this.fontParser = new FontParser();
+        this.translationParser = new TranslationParser();
     }
     
     /**
@@ -37,12 +39,14 @@ public class MinecraftPackParser {
         fontParser.printStatistics(fonts);
         
         // Future: Parse translations
-        // TranslationsInfo translations = translationParser.parse(resourcePackPath);
+        TranslationsInfo translations = translationParser.parse(resourcePackPath);
+        translationParser.validate(translations);
+        translationParser.printStatistics(translations);
         
-        // Future: Parse keybinds  
+        // Future: Parse keybinds // TODO no keybind parser but just a writer from the tranlslationInfo
         // KeybindsInfo keybinds = keybindParser.parse(resourcePackPath);
-        
-        return new PackInfo(fonts, null, null);
+
+        return new PackInfo(fonts, null, translations);
     }
     
     /**

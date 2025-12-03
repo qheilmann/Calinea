@@ -2,7 +2,7 @@ package io.calinea.generator.parser.font.providers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.calinea.generator.parser.font.FontParserContext;
+import io.calinea.generator.parser.PackPathContext;
 import io.calinea.pack.font.FontInfo;
 import net.kyori.adventure.key.Key;
 
@@ -19,7 +19,7 @@ public class ReferenceProviderParser implements IProviderParser {
     }
     
     @Override
-    public void parse(JsonNode provider, FontInfo fontInfo, FontParserContext context) throws IOException {
+    public void parse(JsonNode provider, FontInfo fontInfo, PackPathContext context) throws IOException {
         String fontId = provider.get("id").asText();
         Key referencedFontKey = Key.key(fontId);
         

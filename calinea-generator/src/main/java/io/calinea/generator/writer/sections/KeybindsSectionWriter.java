@@ -1,6 +1,5 @@
 package io.calinea.generator.writer.sections;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.calinea.pack.keybind.KeybindsInfo;

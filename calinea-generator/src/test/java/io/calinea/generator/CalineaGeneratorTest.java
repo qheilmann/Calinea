@@ -110,7 +110,7 @@ public class CalineaGeneratorTest {
             FontInfo originalFont = createSampleFont(fontKey);
             FontsInfo fontsInfo = new FontsInfo();
             fontsInfo.addFont(originalFont);
-            PackInfo originalPackInfo = new PackInfo(fontsInfo, new KeybindsInfo(), TranslationsInfo.empty());
+            PackInfo originalPackInfo = new PackInfo(fontsInfo, new KeybindsInfo(), new TranslationsInfo());
             
             JsonPackWriter writer = new JsonPackWriter(originalPackInfo);
             Path jsonFile = tempDir.resolve("simple-font.json");
@@ -137,7 +137,7 @@ public class CalineaGeneratorTest {
             fontsInfo.addFont(font1);
             fontsInfo.addFont(font2);
 
-            PackInfo originalPackInfo = new PackInfo(fontsInfo, new KeybindsInfo(), TranslationsInfo.empty());
+            PackInfo originalPackInfo = new PackInfo(fontsInfo, new KeybindsInfo(), new TranslationsInfo());
 
             JsonPackWriter writer = new JsonPackWriter(originalPackInfo);
             Path jsonFile = tempDir.resolve("multiple-fonts.json");
@@ -161,7 +161,7 @@ public class CalineaGeneratorTest {
             FontInfo font = createSampleFont(fontKey);
             FontsInfo originalFonts = new FontsInfo();
             originalFonts.addFont(font);
-            PackInfo originalPackInfo = new PackInfo(originalFonts, new KeybindsInfo(), TranslationsInfo.empty());
+            PackInfo originalPackInfo = new PackInfo(originalFonts, new KeybindsInfo(), new TranslationsInfo());
             
             JsonPackWriter writer = new JsonPackWriter(originalPackInfo);
             Path jsonFile = tempDir.resolve("unicode-font.json");
@@ -192,7 +192,7 @@ public class CalineaGeneratorTest {
             FontInfo emptyFont = new FontInfo(emptyFontKey);
             FontsInfo originalFonts = new FontsInfo();
             originalFonts.addFont(emptyFont);
-            PackInfo originalPackInfo = new PackInfo(originalFonts, new KeybindsInfo(), TranslationsInfo.empty());
+            PackInfo originalPackInfo = new PackInfo(originalFonts, new KeybindsInfo(), new TranslationsInfo());
 
             JsonPackWriter writer = new JsonPackWriter(originalPackInfo);
             Path jsonFile = tempDir.resolve("empty-font.json");

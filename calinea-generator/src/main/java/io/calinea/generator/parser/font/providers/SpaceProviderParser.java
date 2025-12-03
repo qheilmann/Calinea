@@ -2,7 +2,7 @@ package io.calinea.generator.parser.font.providers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.calinea.generator.parser.font.FontParserContext;
+import io.calinea.generator.parser.PackPathContext;
 import io.calinea.pack.font.FontInfo;
 
 import org.jspecify.annotations.Nullable;
@@ -20,7 +20,7 @@ public class SpaceProviderParser implements IProviderParser {
     }
     
     @Override
-    public void parse(JsonNode provider, FontInfo fontInfo, FontParserContext context) throws IOException {
+    public void parse(JsonNode provider, FontInfo fontInfo, PackPathContext context) throws IOException {
         @Nullable JsonNode advances = provider.get("advances");
         
         if (advances == null || !advances.isObject()) {

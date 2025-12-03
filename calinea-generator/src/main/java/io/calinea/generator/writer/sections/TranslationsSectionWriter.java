@@ -1,7 +1,9 @@
 package io.calinea.generator.writer.sections;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import io.calinea.pack.translation.TranslationInfo;
 import io.calinea.pack.translation.TranslationsInfo;
 
 import java.util.Map;
@@ -15,13 +17,19 @@ import java.util.Map;
  * Output format:
  * <pre>
  * "translations": [
-    * {
-    *     "language": "en_us",
-    *     "entries": [
-    *         {"item.minecraft.wind_charge": "Wind Charge"},
-    *         {"entity.minecraft.pig": "Pig"}
-    *     ]
-    * }
+ *     {
+ *         "language": "en_us",
+ *         "entries": {
+ *             "item.minecraft.wind_charge": "Wind Charge",
+ *             "entity.minecraft.pig": "Pig"
+ *         }
+ *     },
+ *     {
+ *         "language": "fr_fr",
+ *         "entries": {
+ *             "entity.minecraft.pig": "Cochon"
+ *         }
+ *     }
  * ]
  * </pre>
  */
@@ -32,8 +40,7 @@ public class TranslationsSectionWriter implements ISectionWriter {
     /**
      * Creates a new TranslationsSectionWriter.
      * 
-     * @param translations map of translation keys to their display text
-     * @param language the language code (e.g., "en_us", "fr_fr")
+     * @param translations the translations info containing all languages
      */
     public TranslationsSectionWriter(TranslationsInfo translations) {
         this.translationsInfo = translations;
@@ -55,20 +62,27 @@ public class TranslationsSectionWriter implements ISectionWriter {
             return;
         }
         
-        ObjectNode translationsNode = root.putObject("translations");
-        translationsNode.put("language", translationsInfo.language());
-
-        ObjectNode entriesObject = translationsNode.putObject("entries");
-
-        for (Map.Entry<String, String> entry : translationsInfo.translations().entrySet()) {
-            entriesObject.put(entry.getKey(), entry.getValue());
+        ArrayNode translationsArray = root.putArray("translations");
+        
+        for (TranslationInfo langInfo : translationsInfo.getLanguages().values()) {
+            ObjectNode langNode = translationsArray.addObject();
+            langNode.put("language", langInfo.language());
+            
+            ObjectNode entriesObject = langNode.putObject("entries");
+            for (Map.Entry<String, String> entry : langInfo.translations().entrySet()) {
+                entriesObject.put(entry.getKey(), entry.getValue());
+            }
         }
     }
     
     @Override
     public void printStatistics() {
         if (hasData()) {
-            System.out.println("  - " + translationsInfo.size() + " translations (" + translationsInfo.language() + ")");
+            System.out.println("  - " + translationsInfo.totalEntryCount() + " translations across " 
+                + translationsInfo.languageCount() + " language(s)");
+            for (TranslationInfo lang : translationsInfo.getLanguages().values()) {
+                System.out.println("    - " + lang.language() + ": " + lang.size() + " entries");
+            }
         }
     }
 }

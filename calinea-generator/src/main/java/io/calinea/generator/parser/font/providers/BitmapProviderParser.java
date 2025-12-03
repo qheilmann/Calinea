@@ -2,7 +2,7 @@ package io.calinea.generator.parser.font.providers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.calinea.generator.parser.font.FontParserContext;
+import io.calinea.generator.parser.PackPathContext;
 import io.calinea.pack.font.FontInfo;
 import net.kyori.adventure.key.Key;
 
@@ -25,7 +25,7 @@ public class BitmapProviderParser implements IProviderParser {
     }
     
     @Override
-    public void parse(JsonNode provider, FontInfo fontInfo, FontParserContext context) throws IOException {
+    public void parse(JsonNode provider, FontInfo fontInfo, PackPathContext context) throws IOException {
         String fileLocation = provider.get("file").asText();
         @Nullable JsonNode chars = provider.get("chars");
         
@@ -61,7 +61,7 @@ public class BitmapProviderParser implements IProviderParser {
     /**
      * Resolves a resourceLocation texture path (namespace:path) to an absolute file path.
      */
-    private Path resolveTexturePath(String resourceLocation, FontParserContext context) {
+    private Path resolveTexturePath(String resourceLocation, PackPathContext context) {
         Key key = Key.key(resourceLocation);
         String namespace = key.namespace();
         String path = key.value();

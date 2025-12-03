@@ -99,6 +99,8 @@ public class JsonPackWriter {
         for (ISectionWriter section : sections) {
             if (section.hasData()) {
                 section.printStatistics();
+            } else {
+                System.out.println("  - No " + section.getSectionName() + " data");
             }
         }
     }
