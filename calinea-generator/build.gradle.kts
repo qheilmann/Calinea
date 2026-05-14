@@ -11,11 +11,15 @@ java {
 
 dependencies {
     implementation(project(":calinea"))
+
+    implementation(platform(libs.jackson.bom))
     implementation(libs.bundles.jackson)
-    
+
     // Null safety annotations
     implementation(libs.jspecify)
-    
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.mockito.bom))
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
 }
