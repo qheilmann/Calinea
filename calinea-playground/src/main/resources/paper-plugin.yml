@@ -1,7 +1,10 @@
+# yaml-language-server-disable
 name: ${name}
 description: ${description}
+# yaml-language-server-disable
 main: ${mainClass}
 author: ${author}
+# yaml-language-server-disable
 api-version: ${apiVersion}
 version: ${version}
 website: ${website}
