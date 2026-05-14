@@ -1,20 +1,25 @@
 
 [versions]
-adventure = "4.25.0" # https://mvnrepository.com/artifact/net.kyori/adventure-api
-commandapi = "11.0.0" # https://central.sonatype.com/artifact/dev.jorel/commandapi-paper-shade
-jackson = "2.18.0" # https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom
-jspecify = "1.0.0" # https://mvnrepository.com/artifact/org.jspecify/jspecify
-junit-jupiter = "5.11.3" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-log4j = "2.25.2" # https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
-mockito = "5.14.2" # https://mvnrepository.com/artifact/org.mockito/mockito-core
-shadow = "9.2.2" # https://plugins.gradle.org/plugin/com.gradleup.shadow
-slf4j = "2.0.17" # https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+
+# internal only (update freely)
+commandapi = "11.2.0" # https://central.sonatype.com/artifact/dev.jorel/commandapi-paper-shade
+jackson = "2.21.3" # https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom
+junit-jupiter = "6.0.3" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+mockito = "5.23.0" # https://mvnrepository.com/artifact/org.mockito/mockito-core
+shadow = "9.4.1" # https://plugins.gradle.org/plugin/com.gradleup.shadow
+
+# track platform (bump when paper bumps)
+adventure = "4.26.1" # https://mvnrepository.com/artifact/net.kyori/adventure-api
+log4j = "2.26.0" # https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+slf4j = "2.0.18" # https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 # Minecraft/Paper (for playground)
 # Paper API
 # https://repo.papermc.io/ui/packages?name=io.papermc.paper%3Apaper-api&type=packages
 # Don't forget to update the api version paper-plugin.yml
 # you can see api-version pattern here https://docs.papermc.io/paper/dev/getting-started/paper-plugins/
-paper-api = "1.21.10-R0.1-20251114.162035-42"
+paper-api = "26.1.2.build.+"
+# API level
+jspecify = "1.0.0" # https://mvnrepository.com/artifact/org.jspecify/jspecify
 
 [libraries]
 # Adventure Components (main library dependency)
