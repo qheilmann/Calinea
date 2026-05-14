@@ -1,13 +1,13 @@
 package io.calinea.pack.reader;
 
+import java.io.IOException;
+
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.calinea.pack.translation.TranslationInfo;
 import io.calinea.pack.translation.TranslationsInfo;
-
-import java.io.IOException;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Reads the "translations" section from Calinea config JSON.
@@ -63,7 +63,7 @@ public class TranslationsSectionReader implements ISectionReader<TranslationsInf
         // Read entries
         @Nullable JsonNode entriesNode = langNode.get("entries");
         if (entriesNode != null && entriesNode.isObject()) {
-            entriesNode.fields().forEachRemaining(entry -> {
+            entriesNode.properties().forEach(entry -> {
                 String key = entry.getKey();
                 String value = entry.getValue().asText();
                 translationInfo.addTranslation(key, value);

@@ -1,7 +1,5 @@
 package io.calinea.segmentation;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 
@@ -24,7 +22,7 @@ public class ComponentLine implements ComponentLike {
     }
 
     @Override
-    public @NotNull Component asComponent() {
+    public Component asComponent() {
         return component();
     }
 }

@@ -1,6 +1,16 @@
 package io.calinea.generator.writer;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.calinea.generator.writer.sections.FontsSectionWriter;
@@ -8,17 +18,6 @@ import io.calinea.generator.writer.sections.ISectionWriter;
 import io.calinea.generator.writer.sections.TranslationsSectionWriter;
 import io.calinea.pack.PackInfo;
 import io.calinea.pack.reader.JsonPackReader;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Writes Calinea data in JSON format for easier debugging and manual editing.
@@ -41,10 +40,9 @@ public class JsonPackWriter {
     private final List<ISectionWriter> sections;
     
     public JsonPackWriter(PackInfo packInfo) {
-        JsonFactory factory = JsonFactory.builder()
+        this.objectMapper = JsonMapper.builder()
             .configure(JsonWriteFeature.ESCAPE_NON_ASCII, true)
             .build();
-        this.objectMapper = new ObjectMapper(factory);
 
         // Sections
         this.sections = new ArrayList<>();
@@ -98,7 +96,7 @@ public class JsonPackWriter {
             if (section.hasData()) {
                 section.printStatistics();
             } else {
-                System.out.println("  - No " + section.getSectionName() + " data");
+                System.err.println("  - No " + section.getSectionName() + " data");
             }
         }
     }

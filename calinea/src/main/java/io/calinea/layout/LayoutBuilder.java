@@ -36,9 +36,9 @@ public class LayoutBuilder {
     private double paddingLeft;
     private double paddingRight;
     private boolean fillLines = false;
-    private CommandSender sender;
-    private Entity subject;
-    private LayoutContext context;
+    @Nullable private CommandSender sender;
+    @Nullable private Entity subject;
+    @Nullable private LayoutContext context;
 
     /**
      * Creates a new LayoutBuilder for the given component.
