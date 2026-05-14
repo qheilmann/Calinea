@@ -5,7 +5,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     withSourcesJar()
     withJavadocJar()
@@ -22,18 +22,23 @@ tasks.withType<JavaCompile> {
 
 dependencies {
     api(libs.bundles.adventure)
+
+    implementation(platform(libs.jackson.bom))
     implementation(libs.bundles.jackson)
-    
+
     // Null safety annotations
     api(libs.jspecify)
-    
+
     // Paper API for selector resolution (compileOnly = not bundled, user provides it)
     compileOnly(libs.paper.api)
-    
+
     // Optional logging adapters
+    implementation(platform(libs.log4j.bom))
     compileOnly(libs.log4j.api)
     compileOnly(libs.slf4j.api)
-    
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.mockito.bom))
     testImplementation(libs.bundles.testing.implementation)
     testRuntimeOnly(libs.bundles.testing.runtime)
     testImplementation(libs.paper.api)

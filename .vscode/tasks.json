@@ -47,7 +47,7 @@
                 "set a-",
                 "&& . \"${ENV_FILE}\"",
                 "&& cd \"${SERVER_PATH}\"",
-                "&& ./start --java   \"${JBR21_HOME}\\bin\\java\"",
+                "&& ./start --java   \"${JBR_HOME}\\bin\\java\"",
                 "           --args   \"-XX:+AllowEnhancedClassRedefinition -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:1000 -Ddisable.watchdog=true\"",
                 "           --jar    \"${SERVER_JAR}\"",
                 "           --memory \"${SERVER_ALLOCATED_MEMORY}\"",

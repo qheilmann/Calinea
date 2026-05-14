@@ -1,15 +1,14 @@
 package io.calinea.pack.reader;
 
+import java.io.IOException;
+
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.calinea.pack.font.FontInfo;
 import io.calinea.pack.font.FontsInfo;
-
 import net.kyori.adventure.key.Key;
-
-import org.jspecify.annotations.Nullable;
-
-import java.io.IOException;
 
 /**
  * Reads the "fonts" section from Calinea config JSON.
@@ -70,7 +69,7 @@ public class FontsSectionReader implements ISectionReader<FontsInfo> {
         // Read widths (optional)
         @Nullable JsonNode widthsNode = fontNode.get("widths");
         if (widthsNode != null && widthsNode.isObject()) {
-            widthsNode.fields().forEachRemaining(entry -> {
+            widthsNode.properties().forEach(entry -> {
                 String charKey = entry.getKey();
                 double width = entry.getValue().asDouble();
                 int codepoint = charKey.codePointAt(0);

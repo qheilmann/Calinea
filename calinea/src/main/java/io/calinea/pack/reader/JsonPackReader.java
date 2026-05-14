@@ -1,18 +1,16 @@
 package io.calinea.pack.reader;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.SequencedCollection;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.calinea.pack.PackInfo;
 import io.calinea.pack.font.FontsInfo;
 import io.calinea.pack.translation.TranslationsInfo;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.SequencedCollection;
 
 /**
  * Main reader for Calinea config JSON files.
@@ -26,10 +24,7 @@ public class JsonPackReader {
     private final ObjectMapper objectMapper;
     
     public JsonPackReader() {
-        JsonFactory factory = JsonFactory.builder()
-            .configure(JsonWriteFeature.ESCAPE_NON_ASCII, true)
-            .build();
-        this.objectMapper = new ObjectMapper(factory);
+        this.objectMapper = new ObjectMapper();
     }
     
     /**

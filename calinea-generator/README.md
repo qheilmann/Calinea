@@ -10,7 +10,7 @@ You can download the latest released JAR from the [Releases](https://github.com/
 
 ### Building
 
-You can also build the generator from source. The generator requires Java 21 or higher. Build the executable JAR using Gradle:
+You can also build the generator from source. The generator requires Java 25 or higher. Build the executable JAR using Gradle:
 
 ```bash
 ./gradlew :calinea-generator:shadowJar

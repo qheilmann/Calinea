@@ -1,13 +1,12 @@
 package io.calinea.playground;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIPaperConfig;
-
-import java.io.File;
-import java.nio.file.Path;
-
 import io.calinea.Calinea;
 import io.calinea.config.CalineaConfig;
 import io.calinea.logger.CalineaLogger;
@@ -24,27 +23,15 @@ public class CalineaPlayground extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "CalineaPlayground";
     public static final String NAMESPACE = "calinea_playground";
-    ComponentLogger LOGGER = ComponentLogger.logger(PLUGIN_NAME);
+    public static final ComponentLogger LOGGER = ComponentLogger.logger(PLUGIN_NAME);
     private boolean failOnload = false;
 
     @Override
     public void onLoad() {
         try {
-            
-            try {
-                onLoadCommandAPI();
-            } catch (Exception e) {
-                LOGGER.error("Failed to initialize command API: " + e.getMessage());
-                throw e;
-            }
-
-            try  {
-                onLoadCalinea();
-            } catch (Exception e) {
-                LOGGER.error("Failed to load Calinea: " + e.getMessage());
-                throw e;
-            }
-        } catch (Exception e) {
+            onLoadCommandAPI();
+            onLoadCalinea();
+        } catch (Exception _) {
             failOnload = true;
         }
     }
@@ -70,24 +57,35 @@ public class CalineaPlayground extends JavaPlugin {
     }
     
     private void onLoadCalinea() {
-        // Path fontInfoPath = getDataFolder().toPath().resolve("calinea-config.json");
-        // TODO add a config option for this path
-        Path calineaConfigPath = Path.of("D:\\dev\\Minecraft\\_project\\Calinea\\calinea-output\\calinea-config.json");
-
-        CalineaConfig config = new CalineaConfig()
+        try {
+            // Path fontInfoPath = getDataFolder().toPath().resolve("calinea-config.json");
+            // TODO add a config option for this path
+            Path calineaConfigPath = Path.of("D:\\dev\\Minecraft\\_project\\Calinea\\calinea-output\\calinea-config.json");
+            
+            CalineaConfig config = new CalineaConfig()
             .calineaConfigPath(calineaConfigPath)
             .logger(CalineaLogger.fromSlf4jLogger(LOGGER));
-
-        Calinea.onLoad(config);
+            
+            Calinea.onLoad(config);
+            
+        } catch (Exception e) {
+            LOGGER.error("Failed to load Calinea: " + e.getMessage());
+            throw e;
+        }
     }
 
     private void onLoadCommandAPI() {
-        CommandAPIPaperConfig commandApiConfig = new CommandAPIPaperConfig(this);
-        commandApiConfig.missingExecutorImplementationMessage("This command has no implementations for %s");
-        commandApiConfig.setNamespace(NAMESPACE);
-        commandApiConfig.dispatcherFile(new File(getDataFolder(), "command_registration.json"));
-
-        CommandAPI.onLoad(commandApiConfig);
+        try {
+            CommandAPIPaperConfig commandApiConfig = new CommandAPIPaperConfig(this);
+            commandApiConfig.missingExecutorImplementationMessage("This command has no implementations for %s");
+            commandApiConfig.setNamespace(NAMESPACE);
+            commandApiConfig.dispatcherFile(new File(getDataFolder(), "command_registration.json"));
+            
+            CommandAPI.onLoad(commandApiConfig);
+        } catch (Exception e) {
+            LOGGER.error("Failed to initialize command API: " + e.getMessage());
+            throw e;
+        }
     }
     
     /**

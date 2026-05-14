@@ -1,6 +1,7 @@
 package io.calinea.segmentation.handlers;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import io.calinea.pack.font.FontsInfo;
 import io.calinea.segmentation.measurer.ComponentMeasurerConfig;
 import net.kyori.adventure.key.Key;
@@ -24,7 +25,7 @@ public class TextComponentHandler implements IComponentLayoutHandler<TextCompone
     @Override
     public double measureRoot(TextComponent component) {
         if (component == Component.empty() || component.content().isEmpty()) return 0;
-        if (component == Component.newline() || component.content() == "\n") return 0;
+        if (component == Component.newline() || component.content().equals("\n")) return 0;
 
         String text = component.content();
         Key fontKey = component.font();

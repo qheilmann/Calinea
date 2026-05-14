@@ -1,7 +1,4 @@
 
-# Project specific exceptions are at the end of this file
-.assets_helper
-
 ####################### Java gitignore #########################
 # https://github.com/github/gitignore/blob/main/Java.gitignore #
 ################################################################
@@ -468,6 +465,7 @@ build
 
 .env
 !tools/pushToServer/plugins/*.jar
+.assets_helper
 
 # Workspace test folder
 calinea-output/
