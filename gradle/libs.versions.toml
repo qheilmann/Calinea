@@ -9,7 +9,7 @@ mockito = "5.23.0" # https://mvnrepository.com/artifact/org.mockito/mockito-core
 shadow = "9.4.1" # https://plugins.gradle.org/plugin/com.gradleup.shadow
 
 # track platform (bump when paper bumps)
-adventure = "4.26.1" # https://mvnrepository.com/artifact/net.kyori/adventure-api
+adventure = "5.1.1" # https://mvnrepository.com/artifact/net.kyori/adventure-api
 log4j = "2.26.0" # https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
 slf4j = "2.0.18" # https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 # Minecraft/Paper (for playground)
