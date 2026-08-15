@@ -174,6 +174,10 @@ Currently, only Paper is supported. Other platforms may work but are not officia
 - **calinea-generator** - Font atlas generator [Calinea Generator](./calinea-generator/README.md)
 - **calinea-playground** - Example plugin [Calinea Playground](./calinea-playground/README.md)
 
+# Known Issues
+- Fonts are not correctly inherited before measurement with space characters.
+- Non matching png row height and defined font height in my-font.json can cause misalignment issues.
+
 ## License
 
 MIT - see [`LICENSE.txt`](LICENSE.txt)
