@@ -1,8 +1,9 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - '[0-9]*' # also matches pre-release/build-metadata suffixes, e.g. 0.8.0-rc.1, 0.8.0+build.5
 
 permissions:
   contents: write
@@ -21,10 +22,11 @@ jobs:
       
       - name: Build Generator JAR
         run: |
-          chmod +x ./gradlew
           ./gradlew :calinea-generator:shadowJar
       
       - name: Upload Generator to Release
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
           files: calinea-generator/build/libs/calinea-generator-*.jar
